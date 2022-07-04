@@ -1,0 +1,12 @@
+{
+  "name": "lib-vallina",
+  "version": "0.1.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc && vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.4"
+  }
+}

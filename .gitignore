@@ -1,0 +1,29 @@
+# https://github.com/github/gitignore/blob/master/Node.gitignore
+# https://github.com/github/gitignore/blob/master/Global/Windows.gitignore
+# https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
+# https://github.com/github/gitignore/blob/master/Global/Emacs.gitignore
+# https://github.com/github/gitignore/blob/master/Global/Vim.gitignore
+# https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
+
+
+# Common
+*.local
+
+# Mac OS
+.DS_Store
+
+# Node.js
+dist
+dist-ssr
+node_modules
+package-lock.json
+
+# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
+.yarn/*
+# !.yarn/cache
+# !.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+# !.yarn/versions
+.pnp.*
