@@ -1,16 +1,16 @@
 {
-  "name": "app-vallina",
+  "name": "app",
   "version": "0.1.0",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
     "serve": "vite preview"
   },
-  "dependencies": {
-    "lib-vallina": "workspace:*"
-  },
   "devDependencies": {
-    "typescript": "^4.6.4",
-    "vite": "^2.9.8"
+    "typescript": "^4.7.4",
+    "vite": "^2.9.13"
+  },
+  "dependencies": {
+    "paper": "^0.12.15"
   }
 }
