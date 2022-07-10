@@ -1,5 +1,5 @@
 import './style.css'
-import { onFrame, onStart } from './root-a'
+// import { onFrame, onStart } from './root-a'
 import './root-official'
 
 // function main(canvas: HTMLCanvasElement) {

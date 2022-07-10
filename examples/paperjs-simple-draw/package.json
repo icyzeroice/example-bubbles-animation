@@ -1,0 +1,16 @@
+{
+  "name": "paperjs-simple-draw",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^4.7.4",
+    "vite": "^2.9.13"
+  },
+  "dependencies": {
+    "paper": "^0.12.15"
+  }
+}

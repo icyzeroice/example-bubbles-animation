@@ -5,14 +5,8 @@ const balls: Ball[] = [];
 const numBalls = 18;
 
 export function onStart(canvas: HTMLCanvasElement) {
-  console.log(paper.project, paper.projects)
+  paper.install(window)
   paper.setup(canvas)
-
-  console.log(
-
-  new paper.Project(canvas),
-  )
-
 
   for (var i = 0; i < numBalls; i++) {
     const position = paper.Point.random().multiply(new paper.Point(500, 500));
