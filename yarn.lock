@@ -189,6 +189,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prettier@npm:^2":
+  version: 2.6.3
+  resolution: "@types/prettier@npm:2.6.3"
+  checksum: e1836699ca189fff6d2a73dc22e028b6a6f693ed1180d5998ac29fa197caf8f85aa92cb38db642e4a370e616b451cb5722ad2395dab11c78e025a1455f37d1f0
+  languageName: node
+  linkType: hard
+
 "@types/responselike@npm:*, @types/responselike@npm:^1.0.0":
   version: 1.0.0
   resolution: "@types/responselike@npm:1.0.0"
@@ -2774,6 +2781,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier@npm:2.7.1":
+  version: 2.7.1
+  resolution: "prettier@npm:2.7.1::__archiveUrl=https%3A%2F%2Fmirrors.tencent.com%2Fnpm%2Fprettier%2F-%2Fprettier-2.7.1.tgz"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 55a4409182260866ab31284d929b3cb961e5fdb91fe0d2e099dac92eaecec890f36e524b4c19e6ceae839c99c6d7195817579cdffc8e2c80da0cb794463a748b
+  languageName: node
+  linkType: hard
+
 "promise-inflight@npm:^1.0.1":
   version: 1.0.1
   resolution: "promise-inflight@npm:1.0.1::__archiveUrl=http%3A%2F%2Fmirrors.cloud.tencent.com%2Fnpm%2Fpromise-inflight%2F-%2Fpromise-inflight-1.0.1.tgz"
@@ -2950,6 +2966,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root@workspace:."
   dependencies:
+    "@types/prettier": ^2
     "@typescript-eslint/eslint-plugin": ^5.30.4
     "@typescript-eslint/parser": ^5.30.4
     "@yarnpkg/sdks": ^3.0.0-rc.11
@@ -2958,6 +2975,7 @@ __metadata:
     eslint-plugin-import: ^2.26.0
     eslint-plugin-node: ^11.1.0
     eslint-plugin-promise: ^6.0.0
+    prettier: 2.7.1
     typescript: ^4.7.4
   languageName: unknown
   linkType: soft

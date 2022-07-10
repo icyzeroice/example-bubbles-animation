@@ -10,6 +10,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
   // 这个会被 prettier 覆盖
   // "javascript.format.insertSpaceBeforeFunctionParenthesis": true
 }
