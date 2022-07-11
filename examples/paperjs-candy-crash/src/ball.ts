@@ -116,13 +116,17 @@ export class Ball {
 
   react(b: Ball) {
     var dist = this.position.getDistance(b.position)
+
     if (dist < this.radius + b.radius && dist != 0) {
       var overlap = this.radius + b.radius - dist
       var direc = this.position.subtract(b.position).normalize(overlap * 0.015)
+
       this.velocity.add(direc)
       b.velocity.subtract(direc)
+
       this.calcBounds(b)
       b.calcBounds(this)
+
       this.updateBounds()
       b.updateBounds()
     }
@@ -146,9 +150,9 @@ export class Ball {
   }
 
   private getSidePoint(index: number): paper.Point {
-    return this.position
-      .add(this.points[index])
+    return this.points[index]
       .multiply(this.boundOffset[index])
+      .add(this.position)
   }
 
   private updateBounds() {
