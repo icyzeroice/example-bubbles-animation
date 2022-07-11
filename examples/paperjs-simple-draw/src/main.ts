@@ -37,3 +37,36 @@ tool2.onMouseDrag = function (event) {
   // Use the arcTo command to draw cloudy lines
   path.arcTo(event.point);
 };
+
+(function shape2() {
+  const path = new paper.Path({
+    fillColor: {
+      hue: Math.random() * 360,
+      saturation: 1,
+      brightness: 1,
+    },
+    blendMode: "lighter",
+  });
+
+  const radius = 100;
+  const numSegment = Math.floor(radius / 3 + 2);
+  const position = new paper.Point(200, 200);
+  const bounds: paper.Point[] = [];
+
+  for (var i = 0; i < numSegment; i++) {
+    // polar coord
+    const point = new paper.Point({
+      angle: (360 / numSegment) * i,
+      length: radius,
+    });
+
+    bounds.push(point);
+
+    // init the segmetns
+    path.add(position);
+
+    path.segments[i].point = position.add(point);
+  }
+
+  path.smooth();
+})();
