@@ -59,9 +59,7 @@ export class Ball {
   iterate() {
     this.checkBorders()
 
-    if (this.velocity.length > this.maxVelocity) {
-      this.velocity.length = this.maxVelocity
-    }
+    this.velocity.length = Math.min(this.maxVelocity, this.velocity.length)
 
     this.position.add(this.velocity)
 

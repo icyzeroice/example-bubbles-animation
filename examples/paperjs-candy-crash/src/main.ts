@@ -10,7 +10,7 @@ for (var i = 0; i < numBalls; i++) {
 
   const velocity = new paper.Point({
     angle: 360 * Math.random(),
-    length: Math.random() * 10,
+    length: Math.random() * 10 + 10,
   })
 
   const radius = Math.random() * 30 + 30
