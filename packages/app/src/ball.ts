@@ -23,7 +23,8 @@ export class Ball {
   constructor(
     private readonly radius: number,
     private position: paper.Point,
-    private velocity: paper.Point
+    private velocity: paper.Point,
+    private acceleration: paper.Point
   ) {
     this.maxVelocity = 15
     this.numSegment = Math.floor(this.radius / 3 + 2)
@@ -42,7 +43,7 @@ export class Ball {
     this.boundOffset = []
     this.boundOffsetBuff = []
 
-    for (var i = 0; i < this.numSegment; i++) {
+    for (let i = 0; i < this.numSegment; i++) {
       this.gameObject.add(position)
 
       this.points.push(
@@ -60,6 +61,8 @@ export class Ball {
   iterate() {
     this.checkBorders()
 
+    this.velocity = this.velocity.add(this.acceleration.multiply(0.01))
+
     if (this.velocity.length > this.maxVelocity) {
       this.velocity.length = this.maxVelocity
     }
@@ -73,18 +76,25 @@ export class Ball {
    * 位置超出范围时从另一边保持速度出现
    */
   private checkBorders() {
+    // reach to the left boundary
     if (this.position.x < -this.radius) {
       this.position.x = view.width + this.radius
     }
 
+    // reach to the right boundary
     if (this.position.x > view.width + this.radius) {
       this.position.x = -this.radius
     }
 
-    if (this.position.y < -this.radius) {
-      this.position.y = view.height + this.radius
+    // reach to the top boundary
+    if (this.position.y < this.radius) {
+      this.position.y = this.radius
+
+      // 碰撞让速度损失一半
+      this.velocity.y = -this.velocity.y / 2
     }
 
+    // reach to the bottom boundary
     if (this.position.y > view.height + this.radius) {
       this.position.y = -this.radius
     }
@@ -105,9 +115,9 @@ export class Ball {
         this.boundOffset[i] = this.radius / 4
       }
 
-      let next = (i + 1) % this.numSegment
-      var prev = i > 0 ? i - 1 : this.numSegment - 1
-      var offset = this.boundOffset[i]
+      const next = (i + 1) % this.numSegment
+      const prev = i > 0 ? i - 1 : this.numSegment - 1
+      let offset = this.boundOffset[i]
       offset += (this.radius - offset) / 15
       offset +=
         ((this.boundOffset[next] + this.boundOffset[prev]) / 2 - offset) / 3
@@ -116,11 +126,13 @@ export class Ball {
   }
 
   react(b: Ball) {
-    var dist = this.position.getDistance(b.position)
+    const dist = this.position.getDistance(b.position)
 
     if (dist < this.radius + b.radius && dist != 0) {
-      var overlap = this.radius + b.radius - dist
-      var direc = this.position.subtract(b.position).normalize(overlap * 0.015)
+      const overlap = this.radius + b.radius - dist
+      const direc = this.position
+        .subtract(b.position)
+        .normalize(overlap * 0.015)
 
       this.velocity = this.velocity.add(direc)
       b.velocity = b.velocity.subtract(direc)
@@ -134,16 +146,16 @@ export class Ball {
   }
 
   private getBoundOffset(b: paper.Point) {
-    var diff = this.position.subtract(b)
-    var angle = (diff.angle + 180) % 360
+    const diff = this.position.subtract(b)
+    const angle = (diff.angle + 180) % 360
     return this.boundOffset[Math.floor((angle / 360) * this.boundOffset.length)]
   }
 
   private calcBounds(b: Ball) {
-    for (var i = 0; i < this.numSegment; i++) {
-      var tp = this.getSidePoint(i)
-      var bLen = b.getBoundOffset(tp)
-      var td = tp.getDistance(b.position)
+    for (let i = 0; i < this.numSegment; i++) {
+      const tp = this.getSidePoint(i)
+      const bLen = b.getBoundOffset(tp)
+      const td = tp.getDistance(b.position)
       if (td < bLen) {
         this.boundOffsetBuff[i] -= (bLen - td) / 2
       }
@@ -157,7 +169,7 @@ export class Ball {
   }
 
   private updateBounds() {
-    for (var i = 0; i < this.numSegment; i++) {
+    for (let i = 0; i < this.numSegment; i++) {
       this.boundOffset[i] = this.boundOffsetBuff[i]
     }
   }
