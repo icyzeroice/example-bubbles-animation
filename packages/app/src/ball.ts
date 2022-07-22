@@ -1,3 +1,4 @@
+import { getClassifiedColor } from "./colors"
 import { paper } from "./context"
 
 export const view = {
@@ -20,21 +21,21 @@ export class Ball {
   private boundOffsetBuff: number[]
   private points: paper.Point[]
 
+  // simulate the resistance
+  private velocityLoss = 0.005
+
   constructor(
-    private readonly radius: number,
     private position: paper.Point,
     private velocity: paper.Point,
-    private acceleration: paper.Point
+    private acceleration: paper.Point,
+    private readonly radius: number
   ) {
     this.maxVelocity = 15
-    this.numSegment = Math.floor(this.radius / 3 + 2)
+    // this.numSegment = Math.floor(this.radius / 3 + 2)
+    this.numSegment = 30
 
     this.gameObject = new paper.Path({
-      fillColor: {
-        hue: Math.random() * 360,
-        saturation: 1,
-        brightness: 1,
-      },
+      fillColor: getClassifiedColor(),
       blendMode: "lighter",
     })
 
@@ -60,16 +61,29 @@ export class Ball {
 
   iterate() {
     this.checkBorders()
+    this.updatePosition()
+    this.updateShape()
+  }
 
-    this.velocity = this.velocity.add(this.acceleration.multiply(0.01))
+  /**
+   * TODO: need to change the updating strategy to using the delta time
+   */
+  updatePosition() {
+    const nextVelocity = this.velocity.add(this.acceleration.multiply(0.01))
+    const normal = nextVelocity.normalize()
+    const scale = nextVelocity.multiply(normal).subtract(this.velocityLoss)
+
+    this.velocity = scale.multiply(normal)
 
     if (this.velocity.length > this.maxVelocity) {
       this.velocity.length = this.maxVelocity
     }
 
-    this.position = this.position.add(this.velocity)
+    if (this.velocity.length < 0) {
+      this.velocity.length = 0
+    }
 
-    this.updateShape()
+    this.position = this.position.add(this.velocity)
   }
 
   /**
@@ -172,5 +186,9 @@ export class Ball {
     for (let i = 0; i < this.numSegment; i++) {
       this.boundOffset[i] = this.boundOffsetBuff[i]
     }
+  }
+
+  destroy() {
+    this.gameObject.remove()
   }
 }

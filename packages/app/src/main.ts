@@ -1,10 +1,5 @@
 import "./style.css"
 import { onStart, onFrame } from "./scene"
+import { mainlogic } from "./context"
 
-onStart()
-onLoop()
-
-function onLoop() {
-  onFrame()
-  requestAnimationFrame(onLoop)
-}
+mainlogic({ onStart, onFrame })

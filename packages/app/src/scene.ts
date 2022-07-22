@@ -1,34 +1,56 @@
-import { paper } from "./context"
-import { Ball, view } from "./ball"
+import { paper, Time } from "./context"
+import { Ball } from "./ball"
+import { ParticleSystem } from "./particle"
 
+const factories: ParticleSystem[] = []
 const balls: Ball[] = []
-const numBalls = 18
-const gravity = new paper.Point(0, -10)
+const gravity = new paper.Point(0, -2)
 
 export function onStart() {
-  for (var i = 0; i < numBalls; i++) {
-    const position = paper.Point.random().multiply(view.size)
+  factories.push(
+    new ParticleSystem(
+      new paper.Point(200, 700),
+      new paper.Point(0, -1),
+      gravity
+    ),
+    new ParticleSystem(
+      new paper.Point(600, 700),
+      new paper.Point(0, -1),
+      gravity
+    )
+  )
 
-    const velocity = new paper.Point({
-      angle: 360 * Math.random(),
-      length: Math.random() * 10,
+  factories.forEach((factory) => {
+    balls.push(factory.spawn())
+  })
+
+  setInterval(() => {
+    if (!Time.deltaTime) {
+      return
+    }
+
+    factories.forEach((factory) => {
+      balls.push(factory.spawn())
     })
-
-    const radius = Math.random() * 30 + 30
-
-    balls.push(new Ball(radius, position, velocity, gravity))
-  }
+  }, 500)
 }
 
 export function onFrame() {
+  // stop
+  if (!Time.deltaTime) {
+    return
+  }
+
+  // react
   for (var i = 0; i < balls.length - 1; i++) {
     for (var j = i + 1; j < balls.length; j++) {
       balls[i].react(balls[j])
     }
-
-    // world.attract(balls[i])
   }
 
+  // merge
+
+  // move
   for (var i = 0, l = balls.length; i < l; i++) {
     balls[i].iterate()
   }
