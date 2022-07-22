@@ -32,7 +32,7 @@ export function onStart() {
     factories.forEach((factory) => {
       balls.push(factory.spawn())
     })
-  }, 500)
+  }, 300)
 }
 
 export function onFrame() {

@@ -1,3 +1,4 @@
+import { clamp } from "lodash"
 import { getClassifiedColor } from "./colors"
 import { paper } from "./context"
 
@@ -13,16 +14,18 @@ export const view = {
  * - 边界点的长度（用于表示碰撞时的凹陷）
  */
 export class Ball {
-  private readonly maxVelocity: number
-  private readonly numSegment: number
+  private readonly MAX_VELOCITY_SCALE = 15
+
+  private readonly SEGMENT_COUNT = 30
+
+  // simulate the resistance
+  private readonly VELOCITY_SCALE_LOSS = 0.005
+
   private readonly gameObject: paper.Path
 
   private boundOffset: number[]
   private boundOffsetBuff: number[]
   private points: paper.Point[]
-
-  // simulate the resistance
-  private velocityLoss = 0.005
 
   constructor(
     private position: paper.Point,
@@ -30,26 +33,21 @@ export class Ball {
     private acceleration: paper.Point,
     private readonly radius: number
   ) {
-    this.maxVelocity = 15
-    // this.numSegment = Math.floor(this.radius / 3 + 2)
-    this.numSegment = 30
-
     this.gameObject = new paper.Path({
       fillColor: getClassifiedColor(),
       blendMode: "lighter",
     })
 
     this.points = []
-
     this.boundOffset = []
     this.boundOffsetBuff = []
 
-    for (let i = 0; i < this.numSegment; i++) {
+    for (let i = 0; i < this.SEGMENT_COUNT; i++) {
       this.gameObject.add(position)
 
       this.points.push(
         new paper.Point({
-          angle: (360 / this.numSegment) * i,
+          angle: (360 / this.SEGMENT_COUNT) * i,
           length: 1,
         })
       )
@@ -70,18 +68,13 @@ export class Ball {
    */
   updatePosition() {
     const nextVelocity = this.velocity.add(this.acceleration.multiply(0.01))
-    const normal = nextVelocity.normalize()
-    const scale = nextVelocity.multiply(normal).subtract(this.velocityLoss)
 
-    this.velocity = scale.multiply(normal)
-
-    if (this.velocity.length > this.maxVelocity) {
-      this.velocity.length = this.maxVelocity
-    }
-
-    if (this.velocity.length < 0) {
-      this.velocity.length = 0
-    }
+    this.velocity = nextVelocity.normalize()
+    this.velocity.length = clamp(
+      Math.abs(nextVelocity.length) - this.VELOCITY_SCALE_LOSS,
+      0,
+      this.MAX_VELOCITY_SCALE
+    )
 
     this.position = this.position.add(this.velocity)
   }
@@ -118,19 +111,19 @@ export class Ball {
    * 根据当前图形位置，更新图形 Path 所有点
    */
   private updateShape() {
-    for (let i = 0; i < this.numSegment; i++) {
+    for (let i = 0; i < this.SEGMENT_COUNT; i++) {
       this.gameObject.segments[i].point = this.getSidePoint(i)
     }
 
     this.gameObject.smooth()
 
-    for (let i = 0; i < this.numSegment; i++) {
+    for (let i = 0; i < this.SEGMENT_COUNT; i++) {
       if (this.boundOffset[i] < this.radius / 4) {
         this.boundOffset[i] = this.radius / 4
       }
 
-      const next = (i + 1) % this.numSegment
-      const prev = i > 0 ? i - 1 : this.numSegment - 1
+      const next = (i + 1) % this.SEGMENT_COUNT
+      const prev = i > 0 ? i - 1 : this.SEGMENT_COUNT - 1
       let offset = this.boundOffset[i]
       offset += (this.radius - offset) / 15
       offset +=
@@ -166,7 +159,7 @@ export class Ball {
   }
 
   private calcBounds(b: Ball) {
-    for (let i = 0; i < this.numSegment; i++) {
+    for (let i = 0; i < this.SEGMENT_COUNT; i++) {
       const tp = this.getSidePoint(i)
       const bLen = b.getBoundOffset(tp)
       const td = tp.getDistance(b.position)
@@ -183,7 +176,7 @@ export class Ball {
   }
 
   private updateBounds() {
-    for (let i = 0; i < this.numSegment; i++) {
+    for (let i = 0; i < this.SEGMENT_COUNT; i++) {
       this.boundOffset[i] = this.boundOffsetBuff[i]
     }
   }
