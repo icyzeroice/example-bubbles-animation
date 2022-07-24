@@ -27,11 +27,17 @@ export class Ball {
   private boundOffsetBuff: number[]
   private points: paper.Point[]
 
+  private _isAlive = true
+
+  get isAlive() {
+    return this._isAlive
+  }
+
   constructor(
     private position: paper.Point,
     private velocity: paper.Point,
     private acceleration: paper.Point,
-    private readonly radius: number
+    private radius: number
   ) {
     this.gameObject = new paper.Path({
       fillColor: getClassifiedColor(),
@@ -132,24 +138,56 @@ export class Ball {
     }
   }
 
-  react(b: Ball) {
-    const dist = this.position.getDistance(b.position)
+  react(other: Ball) {
+    const dist = this.position.getDistance(other.position)
 
-    if (dist < this.radius + b.radius && dist != 0) {
-      const overlap = this.radius + b.radius - dist
-      const direc = this.position
-        .subtract(b.position)
-        .normalize(overlap * 0.015)
-
-      this.velocity = this.velocity.add(direc)
-      b.velocity = b.velocity.subtract(direc)
-
-      this.calcBounds(b)
-      b.calcBounds(this)
-
-      this.updateBounds()
-      b.updateBounds()
+    if (dist >= this.radius + other.radius || dist === 0) {
+      return
     }
+
+    // 合成
+    if (this.gameObject.fillColor?.equals(other.gameObject.fillColor!)) {
+      // this._isAlive = true
+      other._isAlive = false
+
+      const nextPosition = this.position.add(other.position).divide(2)
+      this.position = nextPosition
+      other.position = nextPosition.clone()
+
+      this.velocity.x = 0
+      this.velocity.y = 0
+      other.velocity.x = 0
+      other.velocity.y = 0
+
+      // grow
+      this.radius = this.radius + other.radius * 0.7
+      this.boundOffset = Array.from(
+        new Array(this.SEGMENT_COUNT),
+        () => this.radius
+      )
+
+      this.boundOffsetBuff = Array.from(
+        new Array(this.SEGMENT_COUNT),
+        () => this.radius
+      )
+
+      return
+    }
+
+    // 反弹
+    const overlap = this.radius + other.radius - dist
+    const direc = this.position
+      .subtract(other.position)
+      .normalize(overlap * 0.015)
+
+    this.velocity = this.velocity.add(direc)
+    other.velocity = other.velocity.subtract(direc)
+
+    this.calcBounds(other)
+    other.calcBounds(this)
+
+    this.updateBounds()
+    other.updateBounds()
   }
 
   private getBoundOffset(b: paper.Point) {

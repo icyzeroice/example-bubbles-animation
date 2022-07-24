@@ -2,8 +2,9 @@ import { paper, Time } from "./context"
 import { Ball } from "./ball"
 import { ParticleSystem } from "./particle"
 
+let objectPool: Ball[] = []
+let isNeedClean = false
 const factories: ParticleSystem[] = []
-const balls: Ball[] = []
 const gravity = new paper.Point(0, -2)
 
 export function onStart() {
@@ -21,7 +22,7 @@ export function onStart() {
   )
 
   factories.forEach((factory) => {
-    balls.push(factory.spawn())
+    objectPool.push(factory.spawn())
   })
 
   setInterval(() => {
@@ -30,7 +31,7 @@ export function onStart() {
     }
 
     factories.forEach((factory) => {
-      balls.push(factory.spawn())
+      objectPool.push(factory.spawn())
     })
   }, 300)
 }
@@ -42,16 +43,31 @@ export function onFrame() {
   }
 
   // react
-  for (var i = 0; i < balls.length - 1; i++) {
-    for (var j = i + 1; j < balls.length; j++) {
-      balls[i].react(balls[j])
+  for (var i = 0; i < objectPool.length - 1; i++) {
+    for (var j = i + 1; j < objectPool.length; j++) {
+      objectPool[i].react(objectPool[j])
+    }
+
+    if (!objectPool[i].isAlive) {
+      isNeedClean = true
     }
   }
 
   // merge
+  // next generation
+  if (isNeedClean) {
+    objectPool = objectPool.filter((o) => {
+      if (!o.isAlive) {
+        o.destroy()
+      }
+
+      return o.isAlive
+    })
+    isNeedClean = false
+  }
 
   // move
-  for (var i = 0, l = balls.length; i < l; i++) {
-    balls[i].iterate()
+  for (var i = 0, l = objectPool.length; i < l; i++) {
+    objectPool[i].iterate()
   }
 }
