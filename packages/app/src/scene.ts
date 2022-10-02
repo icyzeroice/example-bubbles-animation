@@ -10,7 +10,13 @@ const factories: ParticleSystem[] = []
 export function onStart() {
   factories.push(
     new ParticleSystem(
-      new paper.Point(Viewport.width * 0.2, Viewport.height * 0.9),
+      new paper.Point(Viewport.width * 0.1, Viewport.height * 0.9),
+      new paper.Point(0, -1),
+      GRAVITY
+    ),
+
+    new ParticleSystem(
+      new paper.Point(Viewport.width * 0.3, Viewport.height * 0.9),
       new paper.Point(0, -1),
       GRAVITY
     ),
@@ -20,9 +26,14 @@ export function onStart() {
       new paper.Point(0, -1),
       GRAVITY
     ),
+    new ParticleSystem(
+      new paper.Point(Viewport.width * 0.7, Viewport.height * 0.9),
+      new paper.Point(0, -1),
+      GRAVITY
+    ),
 
     new ParticleSystem(
-      new paper.Point(Viewport.width * 0.8, Viewport.height * 0.9),
+      new paper.Point(Viewport.width * 0.9, Viewport.height * 0.9),
       new paper.Point(0, -1),
       GRAVITY
     )

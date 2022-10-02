@@ -1,7 +1,7 @@
 import "./style.css"
 
 import * as THREE from "three"
-import { DoubleSide, Texture, TextureLoader } from "three"
+import { Texture } from "three"
 import { MapControls } from "three/examples/jsm/controls/OrbitControls"
 import Stats from "three/examples/jsm/libs/stats.module.js"
 
@@ -26,25 +26,15 @@ async function main() {
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(0xf0f0f0)
 
-  // const geometry = new THREE.CircleGeometry(5, 32)
   const texture = new Texture(await loadSvg(content, 100, 200))
   texture.needsUpdate = true
 
-  const geometry = new THREE.PlaneGeometry(100, 120)
+  const geometry = new THREE.CircleGeometry(5, 32)
   const material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     transparent: true,
-    // side: DoubleSide,
     map: texture,
-    // map: new Texture(await loadSvg(content, 100, 200)),
   })
-
-  // console.log(await loadSvg(content, 100, 100))
-
-  // new TextureLoader().load(content, (texture) => {
-  //   material.map = texture;
-  //   material.needsUpdate = true;
-  // });
 
   scene.add(new THREE.Mesh(geometry, material))
 
