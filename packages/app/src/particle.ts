@@ -2,11 +2,11 @@ import { paper } from "./context"
 import { Ball } from "./ball"
 
 export class ParticleSystem {
-  private readonly gizmo: paper.Path
-
   private readonly DIRECTION_RANGE: number = 60
 
   private readonly GIZMO_LENGTH = 100
+
+  private readonly gizmo: paper.Path
 
   constructor(
     private position: paper.Point,
@@ -28,7 +28,8 @@ export class ParticleSystem {
   }
 
   spawn(): Ball {
-    const radius = 10
+    const scale = 10
+    const defaultMass = 1
     const velocity = this.velocity.rotate(
       (Math.random() - 0.5) * this.DIRECTION_RANGE,
       new paper.Point(0, 0)
@@ -40,7 +41,8 @@ export class ParticleSystem {
       this.position.clone(),
       velocity,
       this.acceleration.clone(),
-      radius
+      scale,
+      defaultMass
     )
   }
 }

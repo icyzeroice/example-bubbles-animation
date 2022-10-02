@@ -1,6 +1,6 @@
 import { clamp } from "lodash"
-import { getClassifiedColor } from "./colors"
-import { paper } from "./context"
+import { getClassifiedColor } from "./classify"
+import { paper, Time } from "./context"
 
 export const view = {
   size: new paper.Point(paper.view.viewSize.width, paper.view.viewSize.height),
@@ -19,7 +19,10 @@ export class Ball {
   private readonly SEGMENT_COUNT = 30
 
   // simulate the resistance
-  private readonly VELOCITY_SCALE_LOSS = 0.005
+  private readonly VELOCITY_LOSS_NORMAL = 0.005
+  private readonly VELOCITY_LOSS_COLLISION = 0.985
+
+  private readonly LIFETIME_BASE = 3000 // ms
 
   private readonly gameObject: paper.Path
 
@@ -27,17 +30,24 @@ export class Ball {
   private boundOffsetBuff: number[]
   private points: paper.Point[]
 
+  private remainingLifetime = 5000 // ms
+
   private _isAlive = true
 
   get isAlive() {
     return this._isAlive
   }
 
+  private get radius() {
+    return Math.sqrt(this.mass) * this.scale
+  }
+
   constructor(
     private position: paper.Point,
     private velocity: paper.Point,
     private acceleration: paper.Point,
-    private radius: number
+    private scale: number,
+    private mass: number
   ) {
     this.gameObject = new paper.Path({
       fillColor: getClassifiedColor(),
@@ -67,6 +77,7 @@ export class Ball {
     this.checkBorders()
     this.updatePosition()
     this.updateShape()
+    this.updateLifetime()
   }
 
   /**
@@ -77,7 +88,7 @@ export class Ball {
 
     this.velocity = nextVelocity.normalize()
     this.velocity.length = clamp(
-      Math.abs(nextVelocity.length) - this.VELOCITY_SCALE_LOSS,
+      Math.abs(nextVelocity.length) - this.VELOCITY_LOSS_NORMAL,
       0,
       this.MAX_VELOCITY_SCALE
     )
@@ -138,7 +149,23 @@ export class Ball {
     }
   }
 
+  private updateLifetime() {
+    this.remainingLifetime -= Time.deltaTime
+
+    if (!this._isAlive) {
+      this.gameObject.opacity = this.remainingLifetime
+    }
+
+    if (this.remainingLifetime <= 0) {
+      this._isAlive = false
+    }
+  }
+
   react(other: Ball) {
+    if (!this._isAlive || !other._isAlive) {
+      return
+    }
+
     const dist = this.position.getDistance(other.position)
 
     if (dist >= this.radius + other.radius || dist === 0) {
@@ -147,30 +174,7 @@ export class Ball {
 
     // 合成
     if (this.gameObject.fillColor?.equals(other.gameObject.fillColor!)) {
-      // this._isAlive = true
-      other._isAlive = false
-
-      const nextPosition = this.position.add(other.position).divide(2)
-      this.position = nextPosition
-      other.position = nextPosition.clone()
-
-      this.velocity.x = 0
-      this.velocity.y = 0
-      other.velocity.x = 0
-      other.velocity.y = 0
-
-      // grow
-      this.radius = this.radius + other.radius * 0.7
-      this.boundOffset = Array.from(
-        new Array(this.SEGMENT_COUNT),
-        () => this.radius
-      )
-
-      this.boundOffsetBuff = Array.from(
-        new Array(this.SEGMENT_COUNT),
-        () => this.radius
-      )
-
+      this.merge(other)
       return
     }
 
@@ -178,16 +182,26 @@ export class Ball {
     const overlap = this.radius + other.radius - dist
     const direc = this.position
       .subtract(other.position)
-      .normalize(overlap * 0.015)
+      .normalize(overlap * (1 - this.VELOCITY_LOSS_COLLISION))
 
-    this.velocity = this.velocity.add(direc)
-    other.velocity = other.velocity.subtract(direc)
+    this.velocity = this.velocity.add(direc.divide(this.mass * this.mass))
+    other.velocity = other.velocity.subtract(
+      direc.divide(other.mass * other.mass)
+    )
 
     this.calcBounds(other)
     other.calcBounds(this)
 
     this.updateBounds()
     other.updateBounds()
+  }
+
+  private merge(other: Ball) {
+    if (this.mass >= other.mass) {
+      Ball.mergeTwoBalls(this, other)
+    } else {
+      Ball.mergeTwoBalls(other, this)
+    }
   }
 
   private getBoundOffset(b: paper.Point) {
@@ -219,7 +233,38 @@ export class Ball {
     }
   }
 
+  explosion() {}
+
   destroy() {
     this.gameObject.remove()
+  }
+
+  static mergeTwoBalls(biggerOne: Ball, smallerOne: Ball) {
+    // const nextPosition = biggerOne.position.add(smallerOne.position).divide(2)
+    // biggerOne.position = nextPosition
+    // smallerOne.position = nextPosition.clone()
+
+    // biggerOne.velocity.x = 0
+    // biggerOne.velocity.y = 0
+    // smallerOne.velocity.x = 0
+    // smallerOne.velocity.y = 0
+
+    // grow
+    biggerOne.mass += smallerOne.mass
+
+    biggerOne.remainingLifetime =
+      biggerOne.LIFETIME_BASE + biggerOne.mass * 1000
+    smallerOne._isAlive = false
+    smallerOne.remainingLifetime = 1
+
+    biggerOne.boundOffset = Array.from(
+      new Array(biggerOne.SEGMENT_COUNT),
+      () => biggerOne.radius
+    )
+
+    biggerOne.boundOffsetBuff = Array.from(
+      new Array(biggerOne.SEGMENT_COUNT),
+      () => biggerOne.radius
+    )
   }
 }

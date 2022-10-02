@@ -1,23 +1,30 @@
 import { paper, Time } from "./context"
 import { Ball } from "./ball"
 import { ParticleSystem } from "./particle"
+import { GRAVITY } from "./settings"
 
 let objectPool: Ball[] = []
 let isNeedClean = false
 const factories: ParticleSystem[] = []
-const gravity = new paper.Point(0, -2)
 
 export function onStart() {
   factories.push(
     new ParticleSystem(
       new paper.Point(200, 700),
       new paper.Point(0, -1),
-      gravity
+      GRAVITY
     ),
+
+    // new ParticleSystem(
+    //   new paper.Point(400, 700),
+    //   new paper.Point(0, -1),
+    //   gravity
+    // ),
+
     new ParticleSystem(
       new paper.Point(600, 700),
       new paper.Point(0, -1),
-      gravity
+      GRAVITY
     )
   )
 
@@ -33,7 +40,7 @@ export function onStart() {
     factories.forEach((factory) => {
       objectPool.push(factory.spawn())
     })
-  }, 300)
+  }, 500)
 }
 
 export function onFrame() {
@@ -48,7 +55,7 @@ export function onFrame() {
       objectPool[i].react(objectPool[j])
     }
 
-    if (!objectPool[i].isAlive) {
+    if (!objectPool[i].isAlive && objectPool[i]["remainingLifetime"] <= 0) {
       isNeedClean = true
     }
   }
@@ -56,13 +63,16 @@ export function onFrame() {
   // merge
   // next generation
   if (isNeedClean) {
-    objectPool = objectPool.filter((o) => {
-      if (!o.isAlive) {
-        o.destroy()
+    objectPool = objectPool.filter((obj) => {
+      const needDestroy = !obj.isAlive && obj["remainingLifetime"] <= 0
+
+      if (needDestroy) {
+        obj.destroy()
       }
 
-      return o.isAlive
+      return !needDestroy
     })
+
     isNeedClean = false
   }
 

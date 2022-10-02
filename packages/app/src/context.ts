@@ -19,8 +19,13 @@ interface WorldBehavior {
 }
 
 interface WorldTime {
+  // milliseconds
   deltaTime: number
+
+  // milliseconds
   absTime: number
+
+  // milliseconds
   lastAbsTime: number
 }
 
