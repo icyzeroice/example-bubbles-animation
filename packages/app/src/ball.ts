@@ -8,6 +8,8 @@ export const view = {
   height: paper.view.viewSize.height,
 }
 
+const LIFETIME_DISAPPEAR_DURATION = 500 // ms
+
 /**
  * - 位置
  * - 边界点相对位置的偏移
@@ -30,7 +32,7 @@ export class Ball {
   private boundOffsetBuff: number[]
   private points: paper.Point[]
 
-  private remainingLifetime = 5000 // ms
+  private remainingLifetime = this.LIFETIME_BASE // ms
 
   private _isAlive = true
 
@@ -84,7 +86,9 @@ export class Ball {
    * TODO: need to change the updating strategy to using the delta time
    */
   updatePosition() {
-    const nextVelocity = this.velocity.add(this.acceleration.multiply(0.01))
+    const nextVelocity = this.velocity.add(
+      this.acceleration.multiply(Time.deltaTime / 1000)
+    )
 
     this.velocity = nextVelocity.normalize()
     this.velocity.length = clamp(
@@ -152,8 +156,12 @@ export class Ball {
   private updateLifetime() {
     this.remainingLifetime -= Time.deltaTime
 
-    if (!this._isAlive) {
-      this.gameObject.opacity = this.remainingLifetime
+    if (this.remainingLifetime < LIFETIME_DISAPPEAR_DURATION) {
+      this.gameObject.opacity = Math.sqrt(
+        Math.abs(this.remainingLifetime / LIFETIME_DISAPPEAR_DURATION)
+      )
+    } else {
+      this.gameObject.opacity = 1
     }
 
     if (this.remainingLifetime <= 0) {
@@ -162,7 +170,11 @@ export class Ball {
   }
 
   react(other: Ball) {
-    if (!this._isAlive || !other._isAlive) {
+    if (!this._isAlive) {
+      return
+    }
+
+    if (!other._isAlive) {
       return
     }
 
@@ -239,6 +251,11 @@ export class Ball {
     this.gameObject.remove()
   }
 
+  /**
+   * 没有使用现成引擎的原因：
+   * 1. 没有找到有合成物体相关的引擎
+   * 2. 引擎往往带的物理参数过多，可能有很多不需要的干扰运动的项目
+   */
   static mergeTwoBalls(biggerOne: Ball, smallerOne: Ball) {
     // const nextPosition = biggerOne.position.add(smallerOne.position).divide(2)
     // biggerOne.position = nextPosition
@@ -249,13 +266,38 @@ export class Ball {
     // smallerOne.velocity.x = 0
     // smallerOne.velocity.y = 0
 
+    // simple motivation law
+    // next generation ball
+    const nextMass = biggerOne.mass + smallerOne.mass
+    const nextVelocityX =
+      (biggerOne.mass * biggerOne.velocity.x +
+        smallerOne.mass * smallerOne.velocity.x) /
+      nextMass
+    const nextVelocityY =
+      (biggerOne.mass * biggerOne.velocity.y +
+        smallerOne.mass * smallerOne.velocity.y) /
+      nextMass
+
+    // smaller one Centripetal Force
+    const additionalVelocityX =
+      (biggerOne.position.x - smallerOne.position.x) /
+      LIFETIME_DISAPPEAR_DURATION
+    const additionalVelocityY =
+      (biggerOne.position.y - smallerOne.position.y) /
+      LIFETIME_DISAPPEAR_DURATION
+
+    smallerOne.velocity.x = nextVelocityX + additionalVelocityX
+    smallerOne.velocity.y = nextVelocityY + additionalVelocityY
+
     // grow
-    biggerOne.mass += smallerOne.mass
+    biggerOne.mass = nextMass
+    biggerOne.velocity.x = nextVelocityX
+    biggerOne.velocity.y = nextVelocityY
 
     biggerOne.remainingLifetime =
       biggerOne.LIFETIME_BASE + biggerOne.mass * 1000
     smallerOne._isAlive = false
-    smallerOne.remainingLifetime = 1
+    smallerOne.remainingLifetime = LIFETIME_DISAPPEAR_DURATION
 
     biggerOne.boundOffset = Array.from(
       new Array(biggerOne.SEGMENT_COUNT),
