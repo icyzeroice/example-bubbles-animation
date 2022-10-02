@@ -1,12 +1,6 @@
 import { clamp } from "lodash"
 import { getClassifiedColor } from "./classify"
-import { paper, Time } from "./context"
-
-export const view = {
-  size: new paper.Point(paper.view.viewSize.width, paper.view.viewSize.height),
-  width: paper.view.viewSize.width,
-  height: paper.view.viewSize.height,
-}
+import { paper, Time, Viewport } from "./context"
 
 const LIFETIME_DISAPPEAR_DURATION = 500 // ms
 
@@ -106,11 +100,11 @@ export class Ball {
   private checkBorders() {
     // reach to the left boundary
     if (this.position.x < -this.radius) {
-      this.position.x = view.width + this.radius
+      this.position.x = Viewport.width + this.radius
     }
 
     // reach to the right boundary
-    if (this.position.x > view.width + this.radius) {
+    if (this.position.x > Viewport.width + this.radius) {
       this.position.x = -this.radius
     }
 
@@ -123,7 +117,7 @@ export class Ball {
     }
 
     // reach to the bottom boundary
-    if (this.position.y > view.height + this.radius) {
+    if (this.position.y > Viewport.height + this.radius) {
       this.position.y = -this.radius
     }
   }
@@ -278,13 +272,13 @@ export class Ball {
         smallerOne.mass * smallerOne.velocity.y) /
       nextMass
 
-    // smaller one Centripetal Force
+    // smaller one centripetal force
     const additionalVelocityX =
       (biggerOne.position.x - smallerOne.position.x) /
-      LIFETIME_DISAPPEAR_DURATION
+      (LIFETIME_DISAPPEAR_DURATION / 2)
     const additionalVelocityY =
       (biggerOne.position.y - smallerOne.position.y) /
-      LIFETIME_DISAPPEAR_DURATION
+      (LIFETIME_DISAPPEAR_DURATION / 2)
 
     smallerOne.velocity.x = nextVelocityX + additionalVelocityX
     smallerOne.velocity.y = nextVelocityY + additionalVelocityY

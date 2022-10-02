@@ -1,4 +1,4 @@
-import { paper, Time } from "./context"
+import { paper, Time, Viewport } from "./context"
 import { Ball } from "./ball"
 import { ParticleSystem } from "./particle"
 import { GRAVITY } from "./settings"
@@ -10,19 +10,19 @@ const factories: ParticleSystem[] = []
 export function onStart() {
   factories.push(
     new ParticleSystem(
-      new paper.Point(200, 700),
+      new paper.Point(Viewport.width * 0.2, Viewport.height * 0.9),
       new paper.Point(0, -1),
       GRAVITY
     ),
 
-    // new ParticleSystem(
-    //   new paper.Point(400, 700),
-    //   new paper.Point(0, -1),
-    //   gravity
-    // ),
+    new ParticleSystem(
+      new paper.Point(Viewport.width * 0.5, Viewport.height * 0.9),
+      new paper.Point(0, -1),
+      GRAVITY
+    ),
 
     new ParticleSystem(
-      new paper.Point(600, 700),
+      new paper.Point(Viewport.width * 0.8, Viewport.height * 0.9),
       new paper.Point(0, -1),
       GRAVITY
     )
