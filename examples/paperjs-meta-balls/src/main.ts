@@ -4,7 +4,7 @@ import paper from "paper"
 
 paper.setup(document.querySelector<HTMLCanvasElement>("#canvas")!)
 
-var ballPositions = [
+const ballPositions = [
   [255, 129],
   [610, 73],
   [486, 363],
@@ -19,23 +19,29 @@ var ballPositions = [
   [92, 798],
 ]
 
-var handle_len_rate = 2.4
-var circlePaths = []
+const handle_len_rate = 2.4
+const circlePaths: paper.Path.Circle[] = []
 for (var i = 0, l = ballPositions.length; i < l; i++) {
-  var circlePath = new paper.Path.Circle({
+  const circlePath = new paper.Path.Circle({
     center: ballPositions[i],
     radius: 50,
   })
+
+  circlePath.fillColor = "black"
+
   circlePaths.push(circlePath)
 }
 
-var largeCircle = new paper.Path.Circle({
+const largeCircle = new paper.Path.Circle({
   center: [676, 433],
   radius: 100,
 })
+
+largeCircle.fillColor = "black"
 circlePaths.push(largeCircle)
 
-function onMouseMove(event) {
+const tool1 = new paper.Tool()
+tool1.onMouseDrag = (event) => {
   largeCircle.position = event.point
   generateConnections(circlePaths)
 }
@@ -59,7 +65,13 @@ function generateConnections(paths) {
 generateConnections(circlePaths)
 
 // ---------------------------------------------
-function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
+function metaball(
+  ball1: paper.Path,
+  ball2: paper.Path,
+  v: number,
+  handle_len_rate: number,
+  maxDistance: number
+) {
   var center1 = ball1.position
   var center2 = ball2.position
   var radius1 = ball1.bounds.width / 2
@@ -85,21 +97,21 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
     u2 = 0
   }
 
-  var angle1 = (center2 - center1).getAngleInRadians()
+  var angle1 = center2.subtract(center1).getAngleInRadians(center1)
   var angle2 = Math.acos((radius1 - radius2) / d)
   var angle1a = angle1 + u1 + (angle2 - u1) * v
   var angle1b = angle1 - u1 - (angle2 - u1) * v
   var angle2a = angle1 + Math.PI - u2 - (Math.PI - u2 - angle2) * v
   var angle2b = angle1 - Math.PI + u2 + (Math.PI - u2 - angle2) * v
-  var p1a = center1 + getVector(angle1a, radius1)
-  var p1b = center1 + getVector(angle1b, radius1)
-  var p2a = center2 + getVector(angle2a, radius2)
-  var p2b = center2 + getVector(angle2b, radius2)
+  var p1a = center1.add(getVector(angle1a, radius1))
+  var p1b = center1.add(getVector(angle1b, radius1))
+  var p2a = center2.add(getVector(angle2a, radius2))
+  var p2b = center2.add(getVector(angle2b, radius2))
 
   // define handle length by the distance between
   // both ends of the curve to draw
   var totalRadius = radius1 + radius2
-  var d2 = Math.min(v * handle_len_rate, (p1a - p2a).length / totalRadius)
+  var d2 = Math.min(v * handle_len_rate, p1a.subtract(p2a).length / totalRadius)
 
   // case circles are overlapping:
   d2 *= Math.min(1, (d * 2) / (radius1 + radius2))
@@ -121,7 +133,7 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
 }
 
 // ------------------------------------------------
-function getVector(radians, length) {
+function getVector(radians: number, length: number) {
   return new paper.Point({
     // Convert radians to degrees:
     angle: (radians * 180) / Math.PI,

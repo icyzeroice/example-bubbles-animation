@@ -1,0 +1,9 @@
+{
+  "name": "emoji-set",
+  "private": true,
+  "main": "src/index.ts",
+  "version": "0.0.0",
+  "devDependencies": {
+    "typescript": "^4.5.4"
+  }
+}
