@@ -42,7 +42,8 @@ async function decodeImage(content: string): Promise<HTMLImageElement> {
 
 
 export function createDetectionResultService() {
-    const channel = new WebSocket(`ws://${window.location.host}/camera`)
+    // const channel = new WebSocket(`ws://${window.location.host}/camera`)
+    const channel = new WebSocket(`ws://127.0.0.1:8000/camera`)
 
     channel.onmessage = function (evt) {
         const frame = JSON.parse(evt.data) as DetectionResultFrame
