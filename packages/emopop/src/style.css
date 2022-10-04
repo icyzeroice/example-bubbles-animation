@@ -1,0 +1,19 @@
+html,
+body,
+#app {
+  margin: 0;
+  width: auto;
+  height: auto;
+  background-color: aliceblue;
+}
+
+#app {
+  background-color: azure;
+}
+
+#canvas {
+  width: 1000px;
+  height: 600px;
+
+  background-color: white;
+}

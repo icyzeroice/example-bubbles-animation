@@ -1,0 +1,24 @@
+{
+  "name": "emopop",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "@types/gl-matrix": "^3",
+    "@types/lodash": "^4",
+    "typescript": "^4.7.4",
+    "vite": "^2.9.13"
+  },
+  "dependencies": {
+    "@types/three": "^0.144.0",
+    "bitecs": "^0.3.38",
+    "emoji-set": "workspace:^",
+    "gl-matrix": "^3.4.3",
+    "lodash": "^4.17.21",
+    "paper": "^0.12.15",
+    "three": "^0.145.0"
+  }
+}

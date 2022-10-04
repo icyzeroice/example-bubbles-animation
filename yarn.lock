@@ -145,6 +145,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/gl-matrix@npm:^3":
+  version: 3.2.0
+  resolution: "@types/gl-matrix@npm:3.2.0"
+  dependencies:
+    gl-matrix: "*"
+  checksum: 1baa16f2eef299c9379e91f883b121fce97fb84975f6cf790365fb74edd2168ee06aa0cbf25425acbd63970f2b3eb6857a85fa8aa756613dcbe331b64b65e6c1
+  languageName: node
+  linkType: hard
+
 "@types/http-cache-semantics@npm:*":
   version: 4.0.1
   resolution: "@types/http-cache-semantics@npm:4.0.1"
@@ -625,6 +634,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bitecs@npm:^0.3.38":
+  version: 0.3.38
+  resolution: "bitecs@npm:0.3.38"
+  checksum: 8e77f98fc1c180bbd0f05e83e1926e5f65bdb941d8060886a5c43b61cf139d0448e31f6037bb6d5216d3e825372bacb9283a00b2d482d769d99c37bf3e08bcb2
+  languageName: node
+  linkType: hard
+
 "brace-expansion@npm:^1.1.7":
   version: 1.1.11
   resolution: "brace-expansion@npm:1.1.11"
@@ -1000,6 +1016,24 @@ __metadata:
   resolution: "emoji-set@workspace:packages/emoji-set"
   dependencies:
     typescript: ^4.5.4
+  languageName: unknown
+  linkType: soft
+
+"emopop@workspace:packages/emopop":
+  version: 0.0.0-use.local
+  resolution: "emopop@workspace:packages/emopop"
+  dependencies:
+    "@types/gl-matrix": ^3
+    "@types/lodash": ^4
+    "@types/three": ^0.144.0
+    bitecs: ^0.3.38
+    emoji-set: "workspace:^"
+    gl-matrix: ^3.4.3
+    lodash: ^4.17.21
+    paper: ^0.12.15
+    three: ^0.145.0
+    typescript: ^4.7.4
+    vite: ^2.9.13
   languageName: unknown
   linkType: soft
 
@@ -1760,6 +1794,13 @@ __metadata:
     call-bind: ^1.0.2
     get-intrinsic: ^1.1.1
   checksum: 9ceff8fe968f9270a37a1f73bf3f1f7bda69ca80f4f80850670e0e7b9444ff99323f7ac52f96567f8b5f5fbe7ac717a0d81d3407c7313e82810c6199446a5247
+  languageName: node
+  linkType: hard
+
+"gl-matrix@npm:*, gl-matrix@npm:^3.4.3":
+  version: 3.4.3
+  resolution: "gl-matrix@npm:3.4.3"
+  checksum: c47830ba727f3d0fab635c48135af96aef66274079a3e0afd6f68b68c98eae9fc1bcfdc7312fe2301e4fd22dd24c5e0f1b5d025960a208e50d07101ed8d940f9
   languageName: node
   linkType: hard
 
