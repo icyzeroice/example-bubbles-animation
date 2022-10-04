@@ -12,6 +12,21 @@ body,
 }
 
 #canvas {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+
+  width: 1000px;
+  height: 600px;
+
+  background-color: white;
+}
+
+#video {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+
   width: 1000px;
   height: 600px;
 
