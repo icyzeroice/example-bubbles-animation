@@ -12,9 +12,11 @@ body,
 }
 
 #canvas {
-  position: absolute;
+  position: relative;
   top: 0px;
   left: 0px;
+
+  z-index: 100;
 
   width: 1000px;
   height: 600px;
@@ -23,9 +25,11 @@ body,
 }
 
 #video {
-  position: absolute;
+  position: relative;
   top: 0px;
   left: 0px;
+
+  z-index: 10;
 
   width: 1000px;
   height: 600px;
