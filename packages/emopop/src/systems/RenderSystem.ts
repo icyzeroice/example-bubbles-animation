@@ -1,3 +1,3 @@
 import { EmopopWorld } from "../context"
 
-export const RenderSystem = (world: EmopopWorld) => {}
+export const RenderSystem = (world: EmopopWorld) => { }
