@@ -7,6 +7,7 @@ const canvas = document.querySelector<HTMLCanvasElement>("#canvas")!
 
 paper.setup(canvas)
 
+
 let isWorldPaused = true
 
 canvas.onclick = function () {
@@ -52,10 +53,4 @@ export function mainlogic(behavior: WorldBehavior) {
 
     requestAnimationFrame(onLoop)
   }
-}
-
-export const Viewport = {
-  size: new paper.Point(paper.view.viewSize.width, paper.view.viewSize.height),
-  width: paper.view.viewSize.width,
-  height: paper.view.viewSize.height,
 }

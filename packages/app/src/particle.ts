@@ -14,6 +14,8 @@ export class ParticleSystem {
 
   private readonly box: paper.Path
 
+  private readonly position: paper.Point
+
   constructor(
     boundary: [number, number, number, number],
     private velocity: paper.Point,
@@ -27,7 +29,7 @@ export class ParticleSystem {
     this.box.add(new paper.Point(boundary[0], boundary[3]))
 
 
-    const position = new paper.Point(boundary[0] + boundary[2], boundary[1] + boundary[3]).divide(2)
+    this.position = new paper.Point(boundary[0] + boundary[2], boundary[1] + boundary[3]).divide(2)
     const radius = Math.max(boundary[2] - boundary[0], boundary[3] - boundary[1]) / 2
 
     // this.gizmo = new paper.Path()
@@ -37,7 +39,7 @@ export class ParticleSystem {
     // this.gizmo.add(position)
     // this.drawGizmo(this.velocity)
 
-    this.path = new paper.Path.Circle(position, radius)
+    this.path = new paper.Path.Circle(this.position, radius)
     this.path.fillColor = getClassifiedColor(name)
   }
 

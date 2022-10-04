@@ -21,18 +21,5 @@ body,
   width: 1000px;
   height: 600px;
 
-  background-color: white;
-}
-
-#video {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-
-  z-index: 10;
-
-  width: 1000px;
-  height: 600px;
-
-  background-color: white;
+  /* background-color: white; */
 }

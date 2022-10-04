@@ -1,7 +1,7 @@
 import { EmotionName } from "emoji-set"
 import { clamp } from "lodash"
 import { getClassifiedColor } from "./classify"
-import { paper, Time, Viewport } from "./context"
+import { paper, Time } from "./context"
 
 const LIFETIME_DISAPPEAR_DURATION = 500 // ms
 
@@ -103,11 +103,11 @@ export class Ball {
   private checkBorders() {
     // reach to the left boundary
     if (this.position.x < -this.radius) {
-      this.position.x = Viewport.width + this.radius
+      this.position.x = paper.view.viewSize.width + this.radius
     }
 
     // reach to the right boundary
-    if (this.position.x > Viewport.width + this.radius) {
+    if (this.position.x > paper.view.viewSize.width + this.radius) {
       this.position.x = -this.radius
     }
 
@@ -120,7 +120,7 @@ export class Ball {
     }
 
     // reach to the bottom boundary
-    if (this.position.y > Viewport.height + this.radius) {
+    if (this.position.y > paper.view.viewSize.height + this.radius) {
       this.position.y = -this.radius
     }
   }

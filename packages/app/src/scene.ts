@@ -1,3 +1,4 @@
+import { once } from "lodash"
 import { paper, Time } from "./context"
 import { Ball } from "./ball"
 import { ParticleSystem } from "./particle"
@@ -10,7 +11,16 @@ let factories: ParticleSystem[] = []
 
 export function onStart() {
   const background = new paper.Raster()
-  background.position.set(320, 240)
+
+  const initialize = once((image: HTMLImageElement) => {
+    const canvas = document.querySelector<HTMLCanvasElement>("#canvas")!
+    canvas.style.width = image.width + 'px'
+    canvas.style.height = image.height + 'px'
+
+    background.position.set(image.width / 2, image.height / 2)
+    paper.view.viewSize.width = image.width
+    paper.view.viewSize.height = image.height
+  })
 
   setInterval(() => {
     if (!Time.deltaTime) {
@@ -23,6 +33,8 @@ export function onStart() {
   }, 500)
 
   createDetectionResultService((frame) => {
+    initialize(frame.image)
+
     background.image = frame.image
 
     factories.map((factory) => factory.dispose())
