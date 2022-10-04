@@ -19,6 +19,12 @@ interface DetectionResultFrame {
     }
 }
 
+interface DetectionResultDecodedFrame {
+    image: HTMLImageElement
+    boxes: [number, number, number, number][]
+    emotions: EmotionName[]
+}
+
 
 const imageUtil = document.createElement('img')
 
@@ -41,13 +47,21 @@ async function decodeImage(content: string): Promise<HTMLImageElement> {
 }
 
 
-export function createDetectionResultService() {
+export function createDetectionResultService(onmessage: (frame: DetectionResultDecodedFrame) => void) {
     // const channel = new WebSocket(`ws://${window.location.host}/camera`)
     const channel = new WebSocket(`ws://127.0.0.1:8000/camera`)
 
-    channel.onmessage = function (evt) {
+    channel.onmessage = async function (evt) {
         const frame = JSON.parse(evt.data) as DetectionResultFrame
         console.log(frame.image, frame.detection)
+
+        const image = await decodeImage(frame.image)
+
+        onmessage({
+            image: image,
+            boxes: frame.detection.boxes,
+            emotions: frame.detection.emotions
+        })
     }
 
     channel.onopen = function () {

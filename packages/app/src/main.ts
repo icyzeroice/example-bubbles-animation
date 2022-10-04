@@ -5,7 +5,13 @@ import { createDetectionResultService } from './server'
 
 
 
+const videoCanvas = document.querySelector<HTMLCanvasElement>('#video')!
 
-createDetectionResultService()
+
+const videoContext = videoCanvas.getContext('2d')!
+
+createDetectionResultService((frame) => {
+    videoContext.drawImage(frame.image, 0, 0)
+})
 
 mainlogic({ onStart, onFrame })
