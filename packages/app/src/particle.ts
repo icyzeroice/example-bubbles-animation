@@ -12,13 +12,24 @@ export class ParticleSystem {
 
   // private readonly gizmo: paper.Path
 
+  private readonly box: paper.Path
+
   constructor(
-    private position: paper.Point,
+    boundary: [number, number, number, number],
     private velocity: paper.Point,
     private acceleration: paper.Point,
-    private radius: number,
     private name: EmotionName
   ) {
+    this.box = new paper.Path()
+    this.box.add(new paper.Point(boundary[0], boundary[1]))
+    this.box.add(new paper.Point(boundary[2], boundary[1]))
+    this.box.add(new paper.Point(boundary[2], boundary[3]))
+    this.box.add(new paper.Point(boundary[0], boundary[3]))
+
+
+    const position = new paper.Point(boundary[0] + boundary[2], boundary[1] + boundary[3]).divide(2)
+    const radius = Math.max(boundary[2] - boundary[0], boundary[3] - boundary[1]) / 2
+
     // this.gizmo = new paper.Path()
     // this.gizmo.strokeColor = new paper.Color(0, 0, 0, 1)
     // this.gizmo.fillColor = new paper.Color(0, 0, 0, 1)
@@ -26,8 +37,8 @@ export class ParticleSystem {
     // this.gizmo.add(position)
     // this.drawGizmo(this.velocity)
 
-    this.path = new paper.Path.Circle(this.position, this.radius)
-    this.path.fillColor = getClassifiedColor(this.name)
+    this.path = new paper.Path.Circle(position, radius)
+    this.path.fillColor = getClassifiedColor(name)
   }
 
   // drawGizmo(direction: paper.Point) {
@@ -57,6 +68,7 @@ export class ParticleSystem {
   }
 
   dispose() {
+    this.box.remove()
     this.path.remove()
   }
 }

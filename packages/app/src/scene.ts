@@ -28,14 +28,11 @@ export function onStart() {
     factories.map((factory) => factory.dispose())
 
     factories = frame.boxes.map((boundary, index) => {
-      const position = new paper.Point(boundary[0] + boundary[2], boundary[1] + boundary[3]).divide(2)
-      const radius = Math.max(boundary[2] - boundary[0], boundary[3] - boundary[1]) / 2
 
       return new ParticleSystem(
-        position,
+        boundary,
         new paper.Point(0, -1),
         GRAVITY,
-        radius,
         frame.emotions[index]
       )
     })
