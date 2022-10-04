@@ -1,47 +1,16 @@
-import { paper, Time, Viewport } from "./context"
+import { paper, Time } from "./context"
 import { Ball } from "./ball"
 import { ParticleSystem } from "./particle"
 import { GRAVITY } from "./settings"
+import { createDetectionResultService } from "./server"
 
 let objectPool: Ball[] = []
 let isNeedClean = false
-const factories: ParticleSystem[] = []
+let factories: ParticleSystem[] = []
 
 export function onStart() {
-  factories.push(
-    new ParticleSystem(
-      new paper.Point(Viewport.width * 0.1, Viewport.height * 0.9),
-      new paper.Point(0, -1),
-      GRAVITY
-    ),
-
-    new ParticleSystem(
-      new paper.Point(Viewport.width * 0.3, Viewport.height * 0.9),
-      new paper.Point(0, -1),
-      GRAVITY
-    ),
-
-    new ParticleSystem(
-      new paper.Point(Viewport.width * 0.5, Viewport.height * 0.9),
-      new paper.Point(0, -1),
-      GRAVITY
-    ),
-    new ParticleSystem(
-      new paper.Point(Viewport.width * 0.7, Viewport.height * 0.9),
-      new paper.Point(0, -1),
-      GRAVITY
-    ),
-
-    new ParticleSystem(
-      new paper.Point(Viewport.width * 0.9, Viewport.height * 0.9),
-      new paper.Point(0, -1),
-      GRAVITY
-    )
-  )
-
-  factories.forEach((factory) => {
-    objectPool.push(factory.spawn())
-  })
+  const background = new paper.Raster()
+  background.position.set(320, 240)
 
   setInterval(() => {
     if (!Time.deltaTime) {
@@ -52,6 +21,25 @@ export function onStart() {
       objectPool.push(factory.spawn())
     })
   }, 500)
+
+  createDetectionResultService((frame) => {
+    background.image = frame.image
+
+    factories.map((factory) => factory.dispose())
+
+    factories = frame.boxes.map((boundary, index) => {
+      const position = new paper.Point(boundary[0] + boundary[2], boundary[1] + boundary[3]).divide(2)
+      const radius = Math.max(boundary[2] - boundary[0], boundary[3] - boundary[1]) / 2
+
+      return new ParticleSystem(
+        position,
+        new paper.Point(0, -1),
+        GRAVITY,
+        radius,
+        frame.emotions[index]
+      )
+    })
+  })
 }
 
 export function onFrame() {

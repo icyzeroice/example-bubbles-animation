@@ -1,3 +1,4 @@
+import { EmotionName } from "emoji-set"
 import { clamp } from "lodash"
 import { getClassifiedColor } from "./classify"
 import { paper, Time, Viewport } from "./context"
@@ -43,12 +44,14 @@ export class Ball {
     private velocity: paper.Point,
     private acceleration: paper.Point,
     private scale: number,
-    private mass: number
+    private mass: number,
+    private name: EmotionName
   ) {
     this.gameObject = new paper.Path({
-      fillColor: getClassifiedColor(),
-      blendMode: "lighter",
+      fillColor: getClassifiedColor(this.name),
+      opacity: 0.9
     })
+
 
     this.points = []
     this.boundOffset = []
@@ -239,7 +242,7 @@ export class Ball {
     }
   }
 
-  explosion() {}
+  explosion() { }
 
   destroy() {
     this.gameObject.remove()

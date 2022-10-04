@@ -1,15 +1,4 @@
-enum EmotionEnum {
-    Anger,
-    Contempt,
-    Disgust,
-    Fear,
-    Happiness,
-    Neutral,
-    Sadness,
-    Surprise
-}
-
-type EmotionName = keyof typeof EmotionEnum
+import { EmotionName } from 'emoji-set'
 
 interface DetectionResultFrame {
     image: string
@@ -27,6 +16,9 @@ interface DetectionResultDecodedFrame {
 
 
 const imageUtil = document.createElement('img')
+
+// @debug
+// document.querySelector('#app')!.append(imageUtil)
 
 async function decodeImage(content: string): Promise<HTMLImageElement> {
 
@@ -53,7 +45,6 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
 
     channel.onmessage = async function (evt) {
         const frame = JSON.parse(evt.data) as DetectionResultFrame
-        console.log(frame.image, frame.detection)
 
         const image = await decodeImage(frame.image)
 
@@ -65,7 +56,6 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
     }
 
     channel.onopen = function () {
-        console.log("websocket channel opened")
         channel.send("ready");
     };
 
