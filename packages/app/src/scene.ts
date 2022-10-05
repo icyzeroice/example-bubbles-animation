@@ -32,6 +32,7 @@ export function onStart() {
     })
   }, 500)
 
+
   createDetectionResultService((frame) => {
     initialize(frame.image)
 
