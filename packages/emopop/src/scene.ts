@@ -1,18 +1,11 @@
-import { addEntity, addComponent, pipe } from "bitecs"
-import { vec2 } from "gl-matrix"
-import { Position, Velocity } from "./components"
+import { pipe } from "bitecs"
 
 import { TheWorld } from "./context"
-import { TimeSystem } from "./systems"
+import { systems } from "./systems"
 
-const pipeline = pipe(TimeSystem)
 
-const eid = addEntity(TheWorld)
-addComponent(TheWorld, Position, eid)
-addComponent(TheWorld, Velocity, eid)
 
-vec2.set(Position.value[eid], 1, 1)
-vec2.set(Velocity.value[eid], 0, 0)
+const pipeline = pipe(...systems)
 
 export function MainScene() {
   loop()
