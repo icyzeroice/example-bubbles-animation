@@ -62,7 +62,7 @@ export const EmojiConfigSet: EmojiConfig[] = [
 ]
 
 enum EmotionEnum {
-  Anger,
+  Anger = 0,
   Contempt,
   Disgust,
   Fear,
@@ -74,3 +74,11 @@ enum EmotionEnum {
 
 export type EmotionName = keyof typeof EmotionEnum
 
+// WARNING: the index may be changed when typescript has breaking changes
+export function getEmotionIndex(name: string): number | undefined {
+  return EmotionEnum[name as EmotionName]
+}
+
+export function getEmotionName(index: number): string | undefined {
+  return EmotionEnum[index]
+}

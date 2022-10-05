@@ -1,4 +1,7 @@
 import "./style.css"
 import { MainScene } from "./scene"
+import { preloadEmojiTextures } from "./emoji"
 
-MainScene()
+preloadEmojiTextures().then(() => {
+    MainScene()
+})

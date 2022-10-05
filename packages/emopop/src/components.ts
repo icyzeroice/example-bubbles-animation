@@ -9,6 +9,10 @@ export const Emotion = defineComponent({
 
 export const EmotionEmitter = defineComponent()
 
+export const Circle = defineComponent({
+    radius: Types.f32
+})
+
 export const Position = defineComponent({
     value: [Types.f32, 2],
 })
@@ -16,6 +20,8 @@ export const Position = defineComponent({
 export const Velocity = defineComponent({
     value: [Types.f32, 2],
 })
+
+export const RigidBody = defineComponent()
 
 export const TagCreate = defineComponent()
 export const TagRemove = defineComponent()

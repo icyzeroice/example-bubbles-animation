@@ -1,4 +1,5 @@
 import { IWorld, createWorld } from "bitecs"
+import { vec2 } from "gl-matrix"
 import { memoize } from "lodash"
 
 
@@ -35,6 +36,19 @@ export const TheWorld = createWorld<EmopopWorld>({
   }
 })
 
+export interface BackendEmotion {
+  label: number
+  position: vec2
+  radius: number
+}
+
+
+const mocks: () => BackendEmotion[] = () => ([{
+  label: 1,
+  position: vec2.set(vec2.create(), 100, 200),
+  radius: 50,
+}])
+
 
 export const backend = memoize(() => {
   const width = 1920 / devicePixelRatio
@@ -52,6 +66,12 @@ export const backend = memoize(() => {
   })
 
   return {
+    get image() {
+      return
+    },
+    get emotions(): BackendEmotion[] {
+      return mocks()
+    },
     dispose() {
 
     }

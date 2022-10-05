@@ -1,17 +1,15 @@
-import { addComponent, addEntity, defineQuery } from "bitecs"
+import { addComponent, addEntity, defineQuery, removeEntity } from "bitecs"
 import { vec2 } from "gl-matrix"
-import { Emotion, Position, TagCreate, Velocity } from "./components"
+import { Circle, Emotion, EmotionEmitter, Position, RigidBody, Velocity } from "./components"
 
 import * as THREE from "three"
 import { memoize } from "lodash"
 import { MapControls } from "three/examples/jsm/controls/OrbitControls"
 import Stats from "three/examples/jsm/libs/stats.module.js"
-import content from "emoji-set/src/assets/1f600.svg?raw"
 
-import { loadSvgString } from "./image"
-
-import { EmopopWorld } from "./context"
-import { DoubleSide, Mesh, MeshBasicMaterial, PlaneGeometry, Vector3 } from "three"
+import { backend, EmopopWorld } from "./context"
+import { CircleGeometry, Mesh, MeshBasicMaterial, PlaneGeometry, Vector3 } from "three"
+import { createEmoji, getEmojiTexture } from "./emoji"
 
 
 
@@ -19,15 +17,31 @@ import { DoubleSide, Mesh, MeshBasicMaterial, PlaneGeometry, Vector3 } from "thr
 /* -------------------------------------------------------------------------- */
 /*                                emoji emitter                               */
 /* -------------------------------------------------------------------------- */
-export function UpdateEmotionEmitterSystem(world: EmopopWorld) {
-    const eid = addEntity(world)
-    addComponent(world, Position, eid)
-    addComponent(world, Velocity, eid)
-    addComponent(world, TagCreate, eid)
-    addComponent(world, Emotion, eid)
+const queryEmotionEmitter = defineQuery([Emotion, EmotionEmitter])
 
-    vec2.set(Position.value[eid], 1, 1)
-    vec2.set(Velocity.value[eid], 0, 0)
+export function UpdateEmotionEmitterSystem(world: EmopopWorld) {
+    const ents = queryEmotionEmitter(world)
+
+    // clean all
+    for (let index = 0; index < ents.length; index++) {
+        const eid = ents[index];
+        removeEntity(world, eid)
+    }
+
+    // re-created all
+    for (let index = 0; index < backend().emotions.length; index++) {
+        const emotion = backend().emotions[index]
+        const eid = addEntity(world)
+
+        addComponent(world, EmotionEmitter, eid)
+        addComponent(world, Emotion, eid)
+        addComponent(world, Circle, eid)
+        addComponent(world, Position, eid)
+
+        Emotion.label[eid] = emotion.label
+        Circle.radius[eid] = emotion.radius
+        vec2.copy(Position.value[eid], emotion.position)
+    }
 
     return world
 }
@@ -35,7 +49,7 @@ export function UpdateEmotionEmitterSystem(world: EmopopWorld) {
 /* -------------------------------------------------------------------------- */
 /*                               physics system                               */
 /* -------------------------------------------------------------------------- */
-const queryRigidBody = defineQuery([Position, Velocity])
+const queryRigidBody = defineQuery([RigidBody, Position, Velocity])
 
 const GRAVITY = vec2.set(vec2.create(), 0, 2)
 
@@ -89,6 +103,100 @@ const rendering = memoize((world: EmopopWorld) => {
 export function RenderLoopSystem(world: EmopopWorld) {
     rendering(world).renderer.render(rendering(world).scene, rendering(world).camera)
     return world
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                             render emoji system                            */
+/* -------------------------------------------------------------------------- */
+const queryEmoji = defineQuery([Emotion, Circle, Position])
+
+class EmojiObjectPool {
+    private emojis = new Map<number, Mesh<CircleGeometry, MeshBasicMaterial>>()
+
+    private unreached = new Set<number>()
+
+    constructor(private context: ReturnType<typeof rendering>) {
+
+    }
+
+    before() {
+        // TODO: maybe performance issues
+        this.unreached = new Set(this.emojis.keys())
+    }
+
+    has(eid: number) {
+        return this.emojis.has(eid)
+    }
+
+    create(eid: number, label: number) {
+        const mesh = createEmoji(label)
+
+        if (!mesh) {
+            return
+        }
+
+        this.context.scene.add(mesh)
+        this.emojis.set(eid, mesh)
+        this.unreached.delete(eid)
+
+        return mesh
+    }
+
+    update(eid: number, label: number) {
+        const mesh = this.emojis.get(eid)
+
+        if (!mesh) {
+            return
+        }
+
+        const texture = getEmojiTexture(label)
+
+        if (!texture) {
+            return
+        }
+
+        mesh.material.map = texture
+        this.unreached.delete(eid)
+    }
+
+    remove(eid: number) {
+        const mesh = this.emojis.get(eid)
+
+        if (!mesh) {
+            return
+        }
+
+        this.context.scene.remove(mesh)
+        this.emojis.delete(eid)
+    }
+
+    after() {
+        // remove unreached object
+        this.unreached.forEach((eid) => {
+            const emoji = this.emojis.get(eid)
+            if (emoji) {
+                this.context.scene.remove(emoji)
+                emoji.geometry.dispose()
+                emoji.material.dispose()
+            }
+        })
+    }
+}
+
+const pool = memoize((world) => new EmojiObjectPool(rendering(world)), (world) => world.name)
+
+export function RenderEmojiSystem(world: EmopopWorld) {
+    const ents = queryEmoji(world)
+
+    for (let index = 0; index < ents.length; index++) {
+        const eid = ents[index];
+
+        if (pool(world).has(eid)) {
+
+        }
+    }
+
 }
 
 
@@ -178,28 +286,16 @@ export function DebugStatsSystem(world: EmopopWorld) {
 }
 
 
-const emojiExample = memoize(async (world: EmopopWorld) => {
-    const texture = new THREE.Texture(await loadSvgString(content, 500, 500))
-    texture.needsUpdate = true
-
-    const geometry = new THREE.CircleGeometry(50, 32)
-    const material = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        side: DoubleSide,
-        transparent: true,
-        map: texture,
-    })
-
-        ;
+const emojiExample = memoize((world: EmopopWorld) => {
     [
         new Vector3(0, 0, 0),
         new Vector3(world.screen.width, world.screen.height, 0),
         new Vector3(world.screen.width, 0, 0),
         new Vector3(0, world.screen.height, 0)
-    ].map((position) => {
-        const mesh = new Mesh(geometry, material)
-        mesh.position.copy(position)
-        rendering(world).scene.add(mesh)
+    ].forEach((position) => {
+        const mesh = createEmoji(0)
+        mesh?.position.copy(position)
+        mesh && rendering(world).scene.add(mesh)
     })
 
 }, (world) => world.name)
