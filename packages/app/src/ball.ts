@@ -1,7 +1,8 @@
-import { EmotionName } from "emoji-set"
-import { clamp } from "lodash"
+import { EmotionName, getEmotionIndex } from "emoji-set"
+import { clamp, isUndefined } from "lodash"
 import { getClassifiedColor } from "./classify"
 import { paper, Time } from "./context"
+import { createEmoji } from "./emoji"
 
 const LIFETIME_DISAPPEAR_DURATION = 500 // ms
 
@@ -19,9 +20,9 @@ export class Ball {
   private readonly VELOCITY_LOSS_NORMAL = 0.005
   private readonly VELOCITY_LOSS_COLLISION = 0.985
 
-  private readonly LIFETIME_BASE = 3000 // ms
+  private readonly LIFETIME_BASE = 5000 // ms
 
-  private readonly gameObject: paper.Path
+  private readonly gameObject: paper.Path | paper.Group
 
   private boundOffset: number[]
   private boundOffsetBuff: number[]
@@ -47,10 +48,18 @@ export class Ball {
     private mass: number,
     private name: EmotionName
   ) {
-    this.gameObject = new paper.Path({
+    const index = getEmotionIndex(name)
+    const emoji = !isUndefined(index) && createEmoji(index)
+
+    this.gameObject = emoji || new paper.Path({
       fillColor: getClassifiedColor(this.name),
       opacity: 0.9
     })
+
+    if (emoji) {
+      emoji.scale(this.radius * 2 / emoji.bounds.width)
+      emoji.position.set(this.position)
+    }
 
 
     this.points = []
@@ -58,7 +67,7 @@ export class Ball {
     this.boundOffsetBuff = []
 
     for (let i = 0; i < this.SEGMENT_COUNT; i++) {
-      this.gameObject.add(position)
+      emoji || (this.gameObject as paper.Path).add(position)
 
       this.points.push(
         new paper.Point({
@@ -75,7 +84,14 @@ export class Ball {
   iterate() {
     this.checkBorders()
     this.updatePosition()
-    this.updateShape()
+
+    if (!this.gameObject.hasChildren()) {
+      this.updateShape(this.gameObject as paper.Path)
+    } else {
+      this.gameObject.scale(this.radius * 2 / this.gameObject.bounds.width)
+      this.gameObject.position.set(this.position)
+    }
+
     this.updateLifetime()
   }
 
@@ -128,12 +144,12 @@ export class Ball {
   /**
    * 根据当前图形位置，更新图形 Path 所有点
    */
-  private updateShape() {
+  private updateShape(path: paper.Path) {
     for (let i = 0; i < this.SEGMENT_COUNT; i++) {
-      this.gameObject.segments[i].point = this.getSidePoint(i)
+      path.segments[i].point = this.getSidePoint(i)
     }
 
-    this.gameObject.smooth()
+    path.smooth()
 
     for (let i = 0; i < this.SEGMENT_COUNT; i++) {
       if (this.boundOffset[i] < this.radius / 4) {
@@ -182,7 +198,7 @@ export class Ball {
     }
 
     // 合成
-    if (this.gameObject.fillColor?.equals(other.gameObject.fillColor!)) {
+    if (this.name === other.name) {
       this.merge(other)
       return
     }

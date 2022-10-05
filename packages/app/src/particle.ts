@@ -77,7 +77,8 @@ export class ParticleSystem {
 
     this.path = path
 
-    path.scale(radius / path.bounds.width)
+    path.scale(radius * 2 / path.bounds.width)
+    path.position.set(this.position)
   }
 
   // drawGizmo(direction: paper.Point) {
