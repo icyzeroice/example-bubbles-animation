@@ -32,6 +32,7 @@ export class ParticleSystem {
     this.box.add(new paper.Point(boundary[2], boundary[1]))
     this.box.add(new paper.Point(boundary[2], boundary[3]))
     this.box.add(new paper.Point(boundary[0], boundary[3]))
+    this.box.add(new paper.Point(boundary[0], boundary[1]))
 
 
     this.position = new paper.Point(boundary[0] + boundary[2], boundary[1] + boundary[3]).divide(2)

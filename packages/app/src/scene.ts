@@ -20,6 +20,7 @@ export function onStart() {
     background.position.set(image.width / 2, image.height / 2)
     paper.view.viewSize.width = image.width
     paper.view.viewSize.height = image.height
+
   })
 
   setInterval(() => {
