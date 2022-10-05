@@ -1,12 +1,14 @@
 import { paper } from "./context"
 import { Ball } from "./ball"
-import { EmotionName } from "emoji-set"
+import { EmotionName, getEmotionIndex } from "emoji-set"
 import { getClassifiedColor } from "./classify"
+import { createEmoji } from "./emoji"
+import { isUndefined } from "lodash"
 
 export class ParticleSystem {
   private readonly DIRECTION_RANGE: number = 60
 
-  private readonly path: paper.Path
+  private readonly path: paper.Path | paper.Group
 
   // private readonly GIZMO_LENGTH = 100
 
@@ -56,8 +58,26 @@ export class ParticleSystem {
     // this.gizmo.add(position)
     // this.drawGizmo(this.velocity)
 
-    this.path = new paper.Path.Circle(this.position, radius)
-    this.path.fillColor = getClassifiedColor(this.name)
+    const index = getEmotionIndex(this.name)
+
+    if (isUndefined(index)) {
+      this.path = new paper.Path.Circle(this.position, radius)
+      this.path.fillColor = getClassifiedColor(this.name)
+
+      return
+    }
+
+    const path = createEmoji(index)
+
+    if (isUndefined(path)) {
+      this.path = new paper.Path.Circle(this.position, radius)
+      this.path.fillColor = getClassifiedColor(this.name)
+      return
+    }
+
+    this.path = path
+
+    path.scale(radius / path.bounds.width)
   }
 
   // drawGizmo(direction: paper.Point) {
