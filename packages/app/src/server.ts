@@ -6,12 +6,14 @@ interface DetectionResultFrame {
         boxes: [number, number, number, number][]
         emotions: EmotionName[]
     }
+    timestamp: number
 }
 
 interface DetectionResultDecodedFrame {
     image: HTMLImageElement
     boxes: [number, number, number, number][]
     emotions: EmotionName[]
+    timestamp: number
 }
 
 
@@ -50,8 +52,9 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
 
         onmessage({
             image: image,
-            boxes: frame.detection.boxes,
-            emotions: frame.detection.emotions
+            boxes: frame.detection.boxes.slice(0, frame.detection.emotions.length),
+            emotions: frame.detection.emotions,
+            timestamp: frame.timestamp
         })
     }
 

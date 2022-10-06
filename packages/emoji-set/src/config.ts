@@ -10,7 +10,12 @@ export interface EmojiConfig {
   unicode: string
   filename: string
   svg: string
+
+  /**
+   * @deprecated use aliases instread
+   */
   alias: EmotionName
+
   aliases: EmotionName[]
 }
 
@@ -82,10 +87,10 @@ enum EmotionEnum {
 export type EmotionName = keyof typeof EmotionEnum
 
 // WARNING: the index may be changed when typescript has breaking changes
-export function getEmotionIndex(name: string): number | undefined {
+export function getEmotionIndex(name: string): number {
   return EmotionEnum[name as EmotionName]
 }
 
-export function getEmotionName(index: number): string | undefined {
-  return EmotionEnum[index]
+export function getEmotionName(index: number): EmotionName {
+  return EmotionEnum[index] as EmotionName
 }

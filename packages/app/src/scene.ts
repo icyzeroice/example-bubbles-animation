@@ -46,7 +46,8 @@ export function onStart() {
     fps += 1
 
     if (performance.now() - prev >= 1000) {
-      console.log(fps)
+      console.log('video fps:', fps)
+      console.log('', new Date().getTime() / 1000 - frame.timestamp)
       fps = 0
       prev = performance.now()
     }

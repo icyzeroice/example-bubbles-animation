@@ -37,7 +37,7 @@ export async function preloadEmojiTextures() {
 
 function getEmojiTexture(index: number): paper.Path | paper.Group | undefined {
     const name = getEmotionName(index)
-    return emojis.find((emoji) => emoji.alias === name)?.path
+    return emojis.find((emoji) => emoji.aliases.includes(name))?.path
 }
 
 
