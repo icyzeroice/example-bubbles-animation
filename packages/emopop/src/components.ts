@@ -17,11 +17,15 @@ export const Position = defineComponent({
     value: [Types.f32, 2],
 })
 
-export const Velocity = defineComponent({
-    value: [Types.f32, 2],
-})
+export const RigidBody = defineComponent({
+    mass: Types.i8,
+    velocity: [Types.f32, 2],
+    acceleration: [Types.f32, 2],
 
-export const RigidBody = defineComponent()
+    // 0 - off
+    // 1 - on
+    on: Types.i8
+})
 
 export const TagCreate = defineComponent()
 export const TagRemove = defineComponent()

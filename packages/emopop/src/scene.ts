@@ -10,7 +10,7 @@ const pipeline = pipe(...systems)
 export function MainScene() {
   requestInterval(() => {
     pipeline(TheWorld)
-  }, 32)
+  }, 10)
 }
 
 

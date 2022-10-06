@@ -8,7 +8,10 @@ export interface EmopopWorld extends IWorld {
 
   time: {
     delta: number
+    deltaInSeconds: number
+
     elapsed: number
+
     absolute: number
   },
 
@@ -20,12 +23,26 @@ export interface EmopopWorld extends IWorld {
   screen: {
     width: number
     height: number
+  },
+
+  settings: {
+    massUnit: number
+    radiusUnit: number
+
+    // pixel per second
+    defaultVelocity: vec2
+    gravity: vec2
   }
 }
 
 export const TheWorld = createWorld<EmopopWorld>({
   name: 'main',
-  time: { delta: 0, elapsed: 0, absolute: performance.now() },
+  time: {
+    delta: 0,
+    deltaInSeconds: 0,
+    elapsed: 0,
+    absolute: performance.now(),
+  },
   dom: {
     container: document.querySelector<HTMLDivElement>('#app')!,
     canvas: document.querySelector("canvas")!
@@ -33,6 +50,13 @@ export const TheWorld = createWorld<EmopopWorld>({
   screen: {
     width: 0,
     height: 0,
+  },
+
+  settings: {
+    massUnit: 1,
+    radiusUnit: 1,
+    defaultVelocity: vec2.set(vec2.create(), 0, 2),
+    gravity: vec2.set(vec2.create(), 0, 2)
   }
 })
 
@@ -63,6 +87,9 @@ export const backend = memoize(() => {
 
   TheWorld.screen.width = width
   TheWorld.screen.height = height
+  TheWorld.settings.radiusUnit = Math.ceil(Math.min(width, height) * 0.02)
+  TheWorld.settings.defaultVelocity[1] = Math.ceil(height / 4)
+  TheWorld.settings.gravity[1] = Math.ceil(height / 4)
 
 
   setInterval(() => {
