@@ -47,15 +47,19 @@ const mocks: () => BackendEmotion[] = () => ([{
   label: 1,
   position: vec2.set(vec2.create(), 100, 200),
   radius: 50,
+}, {
+  label: 2,
+  position: vec2.set(vec2.create(), 200, 200),
+  radius: 30,
 }])
 
 
 export const backend = memoize(() => {
-  const width = 1920 / devicePixelRatio
-  const height = 1080 / devicePixelRatio
+  const width = 1920
+  const height = 1080
 
-  TheWorld.dom.container.style.width = width + 'px'
-  TheWorld.dom.container.style.height = height + 'px'
+  TheWorld.dom.container.style.width = width / devicePixelRatio + 'px'
+  TheWorld.dom.container.style.height = height / devicePixelRatio + 'px'
 
   TheWorld.screen.width = width
   TheWorld.screen.height = height

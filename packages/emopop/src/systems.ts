@@ -75,7 +75,7 @@ export function PhysicsSystem(world: EmopopWorld) {
 /*                              render loop system                            */
 /* -------------------------------------------------------------------------- */
 const rendering = memoize((world: EmopopWorld) => {
-    const { clientWidth: width, clientHeight: height } = world.dom.container
+    const { width, height } = world.screen
 
     // origin is left-top corner
     const camera = new THREE.OrthographicCamera(
@@ -90,8 +90,8 @@ const rendering = memoize((world: EmopopWorld) => {
     scene.background = new THREE.Color(0x111111)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: world.dom.canvas })
-    renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(width, height)
+    renderer.setPixelRatio(devicePixelRatio)
+    renderer.setSize(width / devicePixelRatio, height / devicePixelRatio)
 
     return {
         scene,
@@ -109,8 +109,6 @@ export function RenderLoopSystem(world: EmopopWorld) {
 /* -------------------------------------------------------------------------- */
 /*                             render emoji system                            */
 /* -------------------------------------------------------------------------- */
-const queryEmoji = defineQuery([Emotion, Circle, Position])
-
 class EmojiObjectPool {
     private emojis = new Map<number, Mesh<CircleGeometry, MeshBasicMaterial>>()
 
@@ -158,6 +156,8 @@ class EmojiObjectPool {
 
         mesh.material.map = texture
         this.unreached.delete(eid)
+
+        return mesh
     }
 
     remove(eid: number) {
@@ -168,6 +168,10 @@ class EmojiObjectPool {
         }
 
         this.context.scene.remove(mesh)
+
+        mesh.geometry.dispose()
+        mesh.material.dispose()
+
         this.emojis.delete(eid)
     }
 
@@ -175,10 +179,13 @@ class EmojiObjectPool {
         // remove unreached object
         this.unreached.forEach((eid) => {
             const emoji = this.emojis.get(eid)
+
             if (emoji) {
                 this.context.scene.remove(emoji)
                 emoji.geometry.dispose()
                 emoji.material.dispose()
+
+                this.emojis.delete(eid)
             }
         })
     }
@@ -186,17 +193,26 @@ class EmojiObjectPool {
 
 const pool = memoize((world) => new EmojiObjectPool(rendering(world)), (world) => world.name)
 
+const queryEmoji = defineQuery([Emotion, Circle, Position])
+
 export function RenderEmojiSystem(world: EmopopWorld) {
     const ents = queryEmoji(world)
+
+    pool(world).before()
 
     for (let index = 0; index < ents.length; index++) {
         const eid = ents[index];
 
-        if (pool(world).has(eid)) {
+        const mesh = pool(world).has(eid) ? pool(world).update(eid, Emotion.label[eid]) : pool(world).create(eid, Emotion.label[eid])
+        mesh?.position.set(Position.value[eid][0], Position.value[eid][1], 0)
 
-        }
+        const radius = Circle.radius[eid]
+        mesh?.scale.set(radius, radius, 1)
     }
 
+    pool(world).after()
+
+    return world
 }
 
 
@@ -206,10 +222,12 @@ export function RenderEmojiSystem(world: EmopopWorld) {
 const background = memoize((world: EmopopWorld) => {
     const geometry = new PlaneGeometry(world.screen.width, world.screen.height)
     const material = new MeshBasicMaterial({
-        color: 'red'
+        color: 0xeeeeee
     })
 
     const mesh = new Mesh(geometry, material)
+
+    // use z = -1 to make sure the background is under the emoji images
     mesh.position.set(world.screen.width / 2, world.screen.height / 2, -1)
 
     rendering(world).scene.add(mesh)
@@ -295,6 +313,7 @@ const emojiExample = memoize((world: EmopopWorld) => {
     ].forEach((position) => {
         const mesh = createEmoji(0)
         mesh?.position.copy(position)
+        mesh?.scale.set(30, 30, 1)
         mesh && rendering(world).scene.add(mesh)
     })
 
@@ -307,7 +326,9 @@ export function DebugExampleSystem(world: EmopopWorld) {
 
 
 export const systems: ((world: EmopopWorld) => EmopopWorld)[] = [
+    UpdateEmotionEmitterSystem,
     RenderLoopSystem,
+    RenderEmojiSystem,
     RenderBackgroundSystem,
     TimeSystem
 ]

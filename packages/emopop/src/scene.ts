@@ -8,10 +8,24 @@ import { systems } from "./systems"
 const pipeline = pipe(...systems)
 
 export function MainScene() {
-  loop()
-
-  function loop() {
+  requestInterval(() => {
     pipeline(TheWorld)
-    requestAnimationFrame(loop)
+  }, 32)
+}
+
+
+function requestInterval(callback: () => void, delay: number) {
+  let start = performance.now()
+  let stop = false
+
+  const intervalFunc = function () {
+    performance.now() - start < delay || (start += delay, callback());
+    stop || requestAnimationFrame(intervalFunc)
+  }
+
+  requestAnimationFrame(intervalFunc);
+
+  return {
+    clear: function () { stop = true }
   }
 }

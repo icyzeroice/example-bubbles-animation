@@ -25,7 +25,7 @@ export async function preloadEmojiTextures() {
 
 export function getEmojiTexture(index: number): Texture | undefined {
     const name = getEmotionName(index)
-    return emojis.find((emoji) => emoji.alias === name)?.texture
+    return emojis.find((emoji) => emoji.aliases.includes(name))?.texture
 }
 
 
@@ -37,7 +37,7 @@ export function createEmoji(label: number) {
     }
 
     // TODO: the same geometry, can be optimized
-    const geometry = new CircleGeometry(50, 32)
+    const geometry = new CircleGeometry(1, 32)
 
     const material = new MeshBasicMaterial({
         color: 0xffffff,
