@@ -11,6 +11,7 @@ export interface EmojiConfig {
   filename: string
   svg: string
   alias: EmotionName
+  aliases: EmotionName[]
 }
 
 /**
@@ -22,21 +23,24 @@ export const EmojiConfigSet: EmojiConfig[] = [
     unicode: "😀",
     filename: "1f600.svg",
     svg: emoji_1f600,
-    alias: 'Happiness'
+    alias: 'Happiness',
+    aliases: ['Happiness', 'Surprise']
   },
   {
     name: "slightly frowning face",
     unicode: "🙁",
     filename: "1f641.svg",
     svg: emoji_1f641,
-    alias: 'Sadness'
+    alias: 'Sadness',
+    aliases: ['Sadness']
   },
   {
     name: "enraged face",
     unicode: "😡",
     filename: "1f621.svg",
     svg: emoji_1f621,
-    alias: 'Anger'
+    alias: 'Anger',
+    aliases: ['Anger', 'Contempt']
   },
   {
     name: "slightly smiling face",
@@ -44,20 +48,23 @@ export const EmojiConfigSet: EmojiConfig[] = [
     filename: "1f642.svg",
     svg: emoji_1f642,
     alias: 'Disgust',
+    aliases: ['Disgust']
   },
   {
     name: "neutral face",
     unicode: "😐",
     filename: "1f610.svg",
     svg: emoji_1f610,
-    alias: 'Neutral'
+    alias: 'Neutral',
+    aliases: ['Neutral']
   },
   {
     name: "fearful face",
     unicode: "😨",
     filename: "1f628.svg",
     svg: emoji_1f628,
-    alias: 'Fear'
+    alias: 'Fear',
+    aliases: ['Fear']
   },
 ]
 

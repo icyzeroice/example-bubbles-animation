@@ -12,6 +12,9 @@ let factories: ParticleSystem[] = []
 export function onStart() {
   const background = new paper.Raster()
 
+  // make the background backwards
+  paper.project.activeLayer.insertChild(0, background)
+
   const initialize = once((image: HTMLImageElement) => {
     const canvas = document.querySelector<HTMLCanvasElement>("#canvas")!
     canvas.style.width = image.width + 'px'
@@ -34,8 +37,19 @@ export function onStart() {
   }, 500)
 
 
+  let fps = 0
+  let prev = performance.now()
+
   createDetectionResultService((frame) => {
     initialize(frame.image)
+
+    fps += 1
+
+    if (performance.now() - prev >= 1000) {
+      console.log(fps)
+      fps = 0
+      prev = performance.now()
+    }
 
     background.image = frame.image
 
