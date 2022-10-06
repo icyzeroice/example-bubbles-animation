@@ -169,6 +169,41 @@ function getNormalLossyVelocity(v: vec2, unit: number): vec2 {
 }
 
 function collision(one: number, other: number) {
+    const distance = vec2.distance(Position.value[one], Position.value[other])
+
+    if (distance >= Circle.radius[one] + Circle.radius[other]) {
+        return false
+    }
+
+    return true
+}
+
+/**
+ * 我来定一条碰撞规则：
+ * 双方速度减半，各自损失的速度为 v1_loss, v2_loss
+ * 
+ * motivation = v1_loss * m1 + v2_loss * m2 
+ * v1_addon = motivation / 2 / m1
+ * v2_addon = motivation / 2 / m2
+ * 
+ * 方向为各自中心的连线上相反
+ */
+function bounce(one: number, other: number, unit: number) {
+    const direction = vec2.subtract(vec2.create(), Position.value[one], Position.value[other])
+    vec2.normalize(direction, direction)
+
+    const oneVel = RigidBody.velocity[one]
+    const otherVel = RigidBody.velocity[other]
+    vec2.scale(oneVel, oneVel, 0.5)
+    vec2.scale(otherVel, otherVel, 0.5)
+
+    const oneVelScale = vec2.length(oneVel)
+    const otherVelScale = vec2.length(otherVel)
+
+    const motivation = oneVelScale * RigidBody.mass[one] + otherVelScale * RigidBody.mass[other]
+    const nextOneVelScale = motivation / 2 / RigidBody.mass[one]
+    const nextOtherVelScale = motivation / 2 / RigidBody.mass[other]
+
 
 }
 
@@ -235,7 +270,18 @@ function PhysicsSystem(world: EmopopWorld) {
         }
 
         for (var otherIndex = i + 1; otherIndex < ents.length; otherIndex += 1) {
-            collision(eid, ents[otherIndex])
+            const otherId = ents[otherIndex]
+            if (!collision(eid, otherId)) {
+                continue
+            }
+
+
+            if (Emotion.label[eid] === Emotion.label[otherId]) {
+                // merge emotion
+                continue
+            }
+
+            // bounce
         }
     }
 
