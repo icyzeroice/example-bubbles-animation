@@ -182,7 +182,10 @@ export class Ball {
     }
   }
 
-  react(other: Ball) {
+  /**
+   * @deprecated
+   */
+  reactDeprecated(other: Ball) {
     if (!this._isAlive) {
       return
     }
@@ -219,6 +222,54 @@ export class Ball {
 
     this.updateBounds()
     other.updateBounds()
+  }
+
+  react(other: Ball) {
+    if (!this._isAlive) {
+      return
+    }
+
+    if (!other._isAlive) {
+      return
+    }
+
+    const dist = this.position.getDistance(other.position)
+
+    if (dist >= this.radius + other.radius) {
+      return
+    }
+
+    // 合成
+    if (this.name === other.name) {
+      this.merge(other)
+      return
+    }
+
+    // 反弹
+    const overlap = this.radius + other.radius - dist
+
+    const direc = this.position
+      .subtract(other.position)
+      .normalize()
+
+    if (this.mass >= other.mass) {
+      this.position.add(direc.multiply(overlap))
+    } else {
+      other.position.subtract(direc.multiply(overlap))
+    }
+
+    this.velocity = this.velocity.divide(2)
+    other.velocity = other.velocity.divide(2)
+
+    const motivation = (this.velocity.length * this.mass + other.velocity.length * other.mass) / 2
+    const nextVelocity = direc.clone()
+    nextVelocity.length = motivation / this.mass
+
+    const nextOtherVelocity = direc.clone()
+    nextOtherVelocity.length = motivation / other.mass
+
+    this.velocity = this.velocity.add(nextVelocity)
+    other.velocity = other.velocity.subtract(nextOtherVelocity)
   }
 
   private merge(other: Ball) {

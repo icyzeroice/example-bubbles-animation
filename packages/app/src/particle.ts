@@ -47,7 +47,7 @@ export class ParticleSystem {
       fillColor: getClassifiedColor(this.name),
       fontFamily: 'Courier New',
       fontWeight: 'bold',
-      fontSize: 25
+      fontSize: 18
     })
 
 

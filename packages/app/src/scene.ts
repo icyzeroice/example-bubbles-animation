@@ -34,7 +34,7 @@ export function onStart() {
     factories.forEach((factory) => {
       objectPool.push(factory.spawn())
     })
-  }, 500)
+  }, 1500)
 
 
   let fps = 0
