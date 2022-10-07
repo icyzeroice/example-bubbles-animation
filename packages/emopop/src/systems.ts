@@ -1,7 +1,7 @@
 import { addComponent, addEntity, defineQuery, removeEntity } from "bitecs"
 import { vec2 } from "gl-matrix"
 import { Circle, Emotion, EmotionEmitter, Position, RigidBody } from "./components"
-import { Engine, Bodies } from 'matter-js'
+// import { Engine, Bodies } from 'matter-js'
 
 import * as THREE from "three"
 import { memoize, clamp } from "lodash"
@@ -205,14 +205,23 @@ function bounce(one: number, other: number, unit: number) {
     const nextOneVelScale = motivation / 2 / RigidBody.mass[one]
     const nextOtherVelScale = motivation / 2 / RigidBody.mass[other]
 
+    const distance = vec2.distance(Position.value[one], Position.value[other])
+    const overlap = Circle.radius[one] + Circle.radius[other] - distance
+    const recoil = vec2.scale(vec2.create(), direction, overlap)
+
+    if (RigidBody.mass[one] > RigidBody.mass[other]) {
+        vec2.subtract(Position.value[other], Position.value[other], recoil)
+    } else {
+        vec2.add(Position.value[one], Position.value[one], recoil)
+    }
 
 }
 
-const engine = memoize((world) => {
-    const matterEngine = Engine.create()
+// const engine = memoize((world) => {
+//     const matterEngine = Engine.create()
 
 
-}, (world) => world.name)
+// }, (world) => world.name)
 
 const queryCircleRigidBody = defineQuery([RigidBody, Circle, Position])
 

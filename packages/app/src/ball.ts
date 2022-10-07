@@ -253,9 +253,9 @@ export class Ball {
       .normalize()
 
     if (this.mass >= other.mass) {
-      this.position.add(direc.multiply(overlap))
-    } else {
       other.position.subtract(direc.multiply(overlap))
+    } else {
+      this.position.add(direc.multiply(overlap))
     }
 
     this.velocity = this.velocity.divide(2)
