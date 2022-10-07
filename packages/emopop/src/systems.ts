@@ -1,6 +1,7 @@
 import { addComponent, addEntity, defineQuery, removeEntity } from "bitecs"
 import { vec2 } from "gl-matrix"
 import { Circle, Emotion, EmotionEmitter, Position, RigidBody } from "./components"
+import { Engine, Bodies } from 'matter-js'
 
 import * as THREE from "three"
 import { memoize, clamp } from "lodash"
@@ -34,7 +35,7 @@ if (process.env.NODE_ENV === 'development') {
     systems.push(
         DebugControlsSystem,
         DebugStatsSystem,
-        DebugExampleSystem,
+        // DebugExampleSystem,
     )
 }
 
@@ -206,6 +207,12 @@ function bounce(one: number, other: number, unit: number) {
 
 
 }
+
+const engine = memoize((world) => {
+    const matterEngine = Engine.create()
+
+
+}, (world) => world.name)
 
 const queryCircleRigidBody = defineQuery([RigidBody, Circle, Position])
 

@@ -198,6 +198,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/matter-js@npm:^0":
+  version: 0.18.2
+  resolution: "@types/matter-js@npm:0.18.2"
+  checksum: 8997d889e2c4fe10eda084e93d5dbd264b3888ea0c33c767d26e2cbb515a5c96717fc16b933a6067583eb5e59c0292187ea229fb2f6eaa2d9a749ec8327496c7
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 17.0.31
   resolution: "@types/node@npm:17.0.31::__archiveUrl=http%3A%2F%2Fmirrors.cloud.tencent.com%2Fnpm%2F%40types%252fnode%2F-%2Fnode-17.0.31.tgz"
@@ -1025,11 +1032,13 @@ __metadata:
   dependencies:
     "@types/gl-matrix": ^3
     "@types/lodash": ^4
+    "@types/matter-js": ^0
     "@types/three": ^0.144.0
     bitecs: ^0.3.38
     emoji-set: "workspace:^"
     gl-matrix: ^3.4.3
     lodash: ^4.17.21
+    matter-js: ^0.18.0
     paper: ^0.12.15
     three: ^0.145.0
     typescript: ^4.7.4
@@ -2404,6 +2413,13 @@ __metadata:
     socks-proxy-agent: ^6.1.1
     ssri: ^9.0.0
   checksum: 42825d119a7e4f5b1a8e7048a86d328cd36bb1ff875d155ce7079d9a0afdd310c198fb310096af358cfa9ecdf643cecf960380686792457dccb36e17efe89eb0
+  languageName: node
+  linkType: hard
+
+"matter-js@npm:^0.18.0":
+  version: 0.18.0
+  resolution: "matter-js@npm:0.18.0"
+  checksum: c7f630348148c26064ad2147f2d68ce4d58095cec9a89069bf6db271a97922ccebd13809193eeffa60e73929a2216364a21265ecdc265f87c782179fcb836d21
   languageName: node
   linkType: hard
 

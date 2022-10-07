@@ -9,6 +9,7 @@
   "devDependencies": {
     "@types/gl-matrix": "^3",
     "@types/lodash": "^4",
+    "@types/matter-js": "^0",
     "typescript": "^4.7.4",
     "vite": "^2.9.13"
   },
@@ -18,6 +19,7 @@
     "emoji-set": "workspace:^",
     "gl-matrix": "^3.4.3",
     "lodash": "^4.17.21",
+    "matter-js": "^0.18.0",
     "paper": "^0.12.15",
     "three": "^0.145.0"
   }
