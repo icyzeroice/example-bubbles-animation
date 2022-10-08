@@ -27,6 +27,16 @@ export const RigidBody = defineComponent({
     on: Types.i8
 })
 
+export const AnimationTicker = defineComponent({
+    total: Types.f32,
+    progress: Types.f32,
+})
+
+export enum RigidBodyOnStatus {
+    OFF = 0,
+    ON = 1,
+}
+
 export const TagCreate = defineComponent()
 export const TagRemove = defineComponent()
 

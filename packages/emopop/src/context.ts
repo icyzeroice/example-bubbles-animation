@@ -73,7 +73,7 @@ const mocks: () => BackendEmotion[] = () => ([{
   radius: 50,
 }, {
   label: 2,
-  position: vec2.set(vec2.create(), 200, 200),
+  position: vec2.set(vec2.create(), 1000, 200),
   radius: 30,
 }])
 
@@ -90,7 +90,6 @@ export const backend = memoize(() => {
   TheWorld.settings.radiusUnit = Math.ceil(Math.min(width, height) * 0.02)
   TheWorld.settings.defaultVelocity[1] = Math.ceil(height / 4)
   TheWorld.settings.gravity[1] = Math.ceil(height / 4)
-
 
   setInterval(() => {
 
