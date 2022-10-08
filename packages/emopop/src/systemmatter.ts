@@ -23,30 +23,30 @@ export const engine = memoize((world: EmopopWorld) => {
     const matterEngine = Engine.create()
     const borderThickness = 10
     const ceiling = Bodies.rectangle(
-        0,
+        world.screen.width / 2,
         world.screen.height + borderThickness / 2,
-        world.screen.width,
+        world.screen.width + borderThickness * 2,
         borderThickness,
         { isStatic: true }
     )
 
     const floor = Bodies.rectangle(
-        0,
+        world.screen.width / 2,
         - borderThickness / 2,
-        world.screen.width,
+        world.screen.width + borderThickness / 2,
         borderThickness,
         { isStatic: true }
     )
     const left = Bodies.rectangle(
         - borderThickness / 2,
-        world.screen.height,
+        world.screen.height / 2,
         borderThickness,
         world.screen.height,
         { isStatic: true }
     )
     const right = Bodies.rectangle(
         world.screen.width + borderThickness / 2,
-        world.screen.height,
+        world.screen.height / 2,
         borderThickness,
         world.screen.height,
         { isStatic: true }

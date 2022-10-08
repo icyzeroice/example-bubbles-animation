@@ -54,24 +54,8 @@ const queryEmojiCreated = enterQuery(queryEmoji)
 const queryEmojiRemoved = exitQuery(queryEmoji)
 
 export function RenderEmojiSystem(world: EmopopWorld) {
-    const entsCreated = queryEmojiCreated(world)
-    const ents = queryEmoji(world)
-    const entsRemoved = queryEmojiRemoved(world)
-
-    // create
-    for (let index = 0; index < entsCreated.length; index++) {
-        const eid = entsCreated[index];
-        const mesh = createEmoji(Emotion.label[eid])
-
-        if (!mesh) {
-            continue
-        }
-
-        rendering(world).scene.add(mesh)
-        shapePool(world).set(eid, mesh)
-    }
-
     // remove
+    const entsRemoved = queryEmojiRemoved(world)
     for (let index = 0; index < entsRemoved.length; index++) {
         const eid = entsRemoved[index];
         const mesh = shapePool(world).get(eid)
@@ -88,7 +72,25 @@ export function RenderEmojiSystem(world: EmopopWorld) {
         shapePool(world).delete(eid)
     }
 
+    // create
+    const entsCreated = queryEmojiCreated(world)
+    for (let index = 0; index < entsCreated.length; index++) {
+        const eid = entsCreated[index];
+        const mesh = createEmoji(Emotion.label[eid])
+
+        if (!mesh) {
+            continue
+        }
+
+        // HACK: renderOrder should be managed
+        mesh.renderOrder = eid
+
+        rendering(world).scene.add(mesh)
+        shapePool(world).set(eid, mesh)
+    }
+
     // update
+    const ents = queryEmoji(world)
     for (let index = 0; index < ents.length; index++) {
         const eid = ents[index];
         const mesh = shapePool(world).get(eid)
