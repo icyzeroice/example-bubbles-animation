@@ -27,3 +27,9 @@ yarn workspace app run dev
 ```shell
 yarn workspace emopop run dev
 ```
+
+## 特性
+
+- [x] 相同颜色球的合并
+- [x] 长时间未参与合并的球消逝
+- [ ] 相同颜色球之间存在引力

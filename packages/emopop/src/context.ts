@@ -32,6 +32,11 @@ export interface EmopopWorld extends IWorld {
     // pixel per second
     defaultVelocity: vec2
     gravity: vec2
+
+    // milliseconds
+    lifetimeBase: number
+    // milliseconds
+    lifetimeUnit: number
   }
 }
 
@@ -56,7 +61,10 @@ export const TheWorld = createWorld<EmopopWorld>({
     massUnit: 1,
     radiusUnit: 1,
     defaultVelocity: vec2.set(vec2.create(), 0, 2),
-    gravity: vec2.set(vec2.create(), 0, 2)
+    gravity: vec2.set(vec2.create(), 0, 2),
+
+    lifetimeBase: 2000,
+    lifetimeUnit: 1000,
   }
 })
 

@@ -4,10 +4,15 @@ import { Types, defineComponent } from "bitecs"
  * @see https://github.com/NateTheGreatt/bitECS/issues/64#issuecomment-1013755855
  */
 export const Emotion = defineComponent({
-    label: Types.i8
+    label: Types.i8,
 })
 
 export const EmotionEmitter = defineComponent()
+
+export const Lifetime = defineComponent({
+    default: Types.f32,
+    remaining: Types.f32,
+})
 
 export const Circle = defineComponent({
     radius: Types.f32
@@ -27,10 +32,10 @@ export const RigidBody = defineComponent({
     on: Types.i8
 })
 
-export const AnimationTicker = defineComponent({
-    total: Types.f32,
-    progress: Types.f32,
-})
+// export const AnimationTicker = defineComponent({
+//     total: Types.f32,
+//     progress: Types.f32,
+// })
 
 export enum RigidBodyOnStatus {
     OFF = 0,

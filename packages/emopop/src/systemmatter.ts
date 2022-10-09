@@ -1,10 +1,10 @@
-import { addComponent, defineQuery, enterQuery, exitQuery, removeEntity } from "bitecs"
+import { defineQuery, enterQuery, exitQuery, removeEntity } from "bitecs"
 import { vec2 } from "gl-matrix"
 import Matter, { Engine, Bodies, World, Vector, Events, Body } from 'matter-js'
 import { isUndefined, memoize } from "lodash"
 import { animate } from "popmotion"
 
-import { AnimationTicker, Circle, Emotion, Position, RigidBody, RigidBodyOnStatus } from "./components"
+import { Circle, Emotion, Lifetime, Position, RigidBody, RigidBodyOnStatus } from "./components"
 import { EmopopWorld } from "./context"
 import { createEmotionEntity } from "./systemlogic"
 import { Bimap } from "./bimap"
@@ -79,13 +79,13 @@ export const engine = memoize((world: EmopopWorld) => {
             RigidBody.on[eidA] = RigidBodyOnStatus.OFF
             RigidBody.on[eidB] = RigidBodyOnStatus.OFF
 
-            addComponent(world, AnimationTicker, eidA)
-            AnimationTicker.total[eidA] = 1000
-            AnimationTicker.progress[eidA] = 0
+            // addComponent(world, AnimationTicker, eidA)
+            // AnimationTicker.total[eidA] = 1000
+            // AnimationTicker.progress[eidA] = 0
 
-            addComponent(world, AnimationTicker, eidB)
-            AnimationTicker.total[eidB] = 1000
-            AnimationTicker.progress[eidB] = 0
+            // addComponent(world, AnimationTicker, eidB)
+            // AnimationTicker.total[eidB] = 1000
+            // AnimationTicker.progress[eidB] = 0
 
             if (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) {
                 createMergedEmotionEntity(world, eidA, eidB)
@@ -115,6 +115,10 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     const prevRadius = Circle.radius[bigger]
     const nextRadius = world.settings.radiusUnit * Math.sqrt(nextMass)
     Circle.radius[merged] = prevRadius
+
+    const initLifetime = world.settings.lifetimeBase + world.settings.lifetimeUnit * nextMass
+    Lifetime.default[merged] = initLifetime
+    Lifetime.remaining[merged] = initLifetime
 
     animate<{ radius: number, x: number, y: number }>({
         from: {
@@ -203,10 +207,10 @@ export function MatterPhysicalSystem(world: EmopopWorld) {
         bodyPool(world).setPair(eid, body)
     }
 
+    // update physical properties
     Engine.update(engine(world), world.time.delta)
 
     const ents = queryCircleBodies(world)
-
     for (let index = 0; index < ents.length; index++) {
         const eid = ents[index];
 

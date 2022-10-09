@@ -53,6 +53,21 @@ const queryEmoji = defineQuery([Emotion, Circle, Position])
 const queryEmojiCreated = enterQuery(queryEmoji)
 const queryEmojiRemoved = exitQuery(queryEmoji)
 
+const numberGenerator = memoize((_: EmopopWorld) => {
+    const MAX_RESULT = Number.MAX_SAFE_INTEGER - 10
+    let result = 0
+
+    return {
+        next() {
+            if (result > MAX_RESULT) {
+                result = 0
+            }
+
+            return result++
+        }
+    }
+}, (world) => world.name)
+
 export function RenderEmojiSystem(world: EmopopWorld) {
     // remove
     const entsRemoved = queryEmojiRemoved(world)
@@ -83,7 +98,7 @@ export function RenderEmojiSystem(world: EmopopWorld) {
         }
 
         // HACK: renderOrder should be managed
-        mesh.renderOrder = eid
+        mesh.renderOrder = numberGenerator(world).next()
 
         rendering(world).scene.add(mesh)
         shapePool(world).set(eid, mesh)

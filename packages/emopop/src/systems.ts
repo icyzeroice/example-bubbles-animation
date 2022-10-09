@@ -1,7 +1,7 @@
 
 import { EmopopWorld } from "./context"
 import { DebugControlsSystem, DebugExampleSystem } from "./systemdebug"
-import { CreateEmojiSystem, UpdateEmotionEmitterSystem, UpdateEmotionLifetimeSystem } from "./systemlogic"
+import { CreateEmojiSystem, RemoveEmotionTerminatedSystem, UpdateEmotionEmitterSystem, UpdateEmotionLifetimeSystem } from "./systemlogic"
 import { MatterPhysicalSystem } from "./systemmatter"
 import { RenderBackgroundSystem, RenderEmojiSystem, RenderLoopSystem } from "./systemrendering"
 
@@ -10,7 +10,7 @@ export const systems: ((world: EmopopWorld) => EmopopWorld)[] = [
     // business logic
     UpdateEmotionEmitterSystem,
     CreateEmojiSystem,
-    UpdateEmotionLifetimeSystem,
+    RemoveEmotionTerminatedSystem,
 
     // physical logic
     // PhysicsSystem,
@@ -22,7 +22,8 @@ export const systems: ((world: EmopopWorld) => EmopopWorld)[] = [
     RenderBackgroundSystem,
 
     // time setting
-    TimeSystem
+    TimeSystem,
+    UpdateEmotionLifetimeSystem,
 ]
 
 if (process.env.NODE_ENV === 'development') {

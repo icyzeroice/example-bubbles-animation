@@ -1,7 +1,8 @@
-import { addComponent, addEntity, defineQuery, removeEntity } from "bitecs"
+import { addComponent, addEntity, defineQuery, removeComponent, removeEntity } from "bitecs"
 import { vec2 } from "gl-matrix"
+import { animate } from "popmotion"
 
-import { Circle, Emotion, EmotionEmitter, Position, RigidBody, RigidBodyOnStatus } from "./components"
+import { Circle, Emotion, EmotionEmitter, Lifetime, Position, RigidBody, RigidBodyOnStatus } from "./components"
 import { backend, EmopopWorld } from "./context"
 
 
@@ -56,6 +57,7 @@ export function createEmotionEntity(world: EmopopWorld) {
     addComponent(world, Circle, eid)
     addComponent(world, Position, eid)
     addComponent(world, RigidBody, eid)
+    addComponent(world, Lifetime, eid)
 
     return eid
 }
@@ -83,6 +85,10 @@ function initializeEmotionEntityFromEmotionEmitter(world: EmopopWorld, emitterId
     )
 
     vec2.copy(RigidBody.velocity[emotionId], randomVelocity)
+
+    const initLifetime = world.settings.lifetimeBase + world.settings.lifetimeUnit * world.settings.massUnit
+    Lifetime.default[emotionId] = initLifetime
+    Lifetime.remaining[emotionId] = initLifetime
 }
 
 let emitDuration = 0
@@ -112,8 +118,43 @@ export function CreateEmojiSystem(world: EmopopWorld) {
 /* -------------------------------------------------------------------------- */
 /*                               emoji lifetime                               */
 /* -------------------------------------------------------------------------- */
-const queryEmotionLifetime = defineQuery([Emotion, Position, RigidBody])
+const queryLifetime = defineQuery([Lifetime])
 
 export function UpdateEmotionLifetimeSystem(world: EmopopWorld) {
+    const ents = queryLifetime(world)
+    for (let index = 0; index < ents.length; index++) {
+        const eid = ents[index];
+
+        Lifetime.remaining[eid] -= world.time.delta
+    }
+
+    return world
+}
+
+const queryEmotionLifetime = defineQuery([Emotion, Circle, Position, RigidBody, Lifetime])
+export function RemoveEmotionTerminatedSystem(world: EmopopWorld) {
+    const ents = queryEmotionLifetime(world)
+
+    for (let index = 0; index < ents.length; index++) {
+        const eid = ents[index];
+
+        if (Lifetime.remaining[eid] <= 0) {
+            // 移除 lifetime 表示后续不再参与各类计算，仅仅渲染最后的结束动画
+            removeComponent(world, Lifetime, eid)
+            removeComponent(world, RigidBody, eid)
+
+            animate({
+                from: Circle.radius[eid],
+                to: 1,
+                onUpdate(latest) {
+                    Circle.radius[eid] = latest
+                },
+                onComplete() {
+                    removeEntity(world, eid)
+                }
+            })
+        }
+    }
+
     return world
 }
