@@ -1,6 +1,6 @@
 
 import { EmopopWorld } from "./context"
-import { DebugControlsSystem, DebugExampleSystem } from "./systemdebug"
+import { DebugControlsSystem, DebugExampleSystem, DebugMatterBoundary, DebugStatsSystem } from "./systemdebug"
 import { CreateEmojiSystem, RemoveEmotionTerminatedSystem, UpdateEmotionEmitterSystem, UpdateEmotionLifetimeSystem } from "./systemlogic"
 import { MatterPhysicalSystem } from "./systemmatter"
 import { RenderBackgroundSystem, RenderEmojiSystem, RenderLoopSystem } from "./systemrendering"
@@ -27,12 +27,14 @@ export const systems: ((world: EmopopWorld) => EmopopWorld)[] = [
 ]
 
 if (process.env.NODE_ENV === 'development') {
-    systems.push(
-        DebugControlsSystem,
-        // DebugStatsSystem,
-        DebugExampleSystem,
-        // DebugMatterBoundary,
-    )
+    const debugSystems: [(world: EmopopWorld) => EmopopWorld, boolean][] = [
+        [DebugControlsSystem, true],
+        [DebugStatsSystem, false],
+        [DebugExampleSystem, true],
+        [DebugMatterBoundary, false],
+    ]
+
+    systems.push(...debugSystems.filter(([_, enabled]) => enabled).map(([system]) => system))
 }
 
 

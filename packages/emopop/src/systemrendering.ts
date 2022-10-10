@@ -1,9 +1,9 @@
 import { defineQuery, enterQuery, exitQuery } from "bitecs"
 import { memoize } from "lodash"
-import { CircleGeometry, Color, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, WebGLRenderer } from "three"
+import { CircleGeometry, Color, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, Texture, WebGLRenderer } from "three"
 
 import { Circle, Emotion, Position } from "./components"
-import { EmopopWorld } from "./context"
+import { backend, EmopopWorld } from "./context"
 import { createEmoji, getEmojiTexture } from "./emoji"
 
 
@@ -145,6 +145,10 @@ const background = memoize((world: EmopopWorld) => {
     rendering(world).scene.add(mesh)
 
     return {
+        update(image: HTMLImageElement) {
+            material.map = new Texture(image)
+            material.map.needsUpdate = true
+        },
         dispose() {
             rendering(world).scene.remove(mesh)
             geometry.dispose()
@@ -155,7 +159,7 @@ const background = memoize((world: EmopopWorld) => {
 
 
 export function RenderBackgroundSystem(world: EmopopWorld) {
-    background(world)
+    background(world).update(backend().image)
     return world
 }
 
