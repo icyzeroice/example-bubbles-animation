@@ -62,7 +62,7 @@ preloadEmojiTextures().then(() => {
 
 })
 
-function transformImageCoordToWorldCoord(coord: vec2, width: number, height: number): vec2 {
-    return vec2.add(coord, vec2.set(coord, coord[0], -coord[1]), vec2.set(vec2.create(), width, height))
+function transformImageCoordToWorldCoord(coord: vec2, _: number, height: number): vec2 {
+    return vec2.add(coord, vec2.set(coord, coord[0], -coord[1]), vec2.set(vec2.create(), 0, height))
 }
 

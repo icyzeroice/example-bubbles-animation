@@ -1,4 +1,4 @@
-import { IWorld, createWorld } from "bitecs"
+import { IWorld, createWorld, System } from "bitecs"
 import { vec2 } from "gl-matrix"
 
 
@@ -40,6 +40,8 @@ export interface EmopopWorld extends IWorld {
   }
 }
 
+export type EmopopSystem = System<[], EmopopWorld>
+
 export const TheWorld = createWorld<EmopopWorld>({
   name: 'main',
   time: {
@@ -62,7 +64,7 @@ export const TheWorld = createWorld<EmopopWorld>({
     massUnit: 1,
     radiusUnit: 1,
     defaultVelocity: vec2.set(vec2.create(), 0, 2),
-    gravity: vec2.set(vec2.create(), 0, 2),
+    gravity: vec2.set(vec2.create(), 0, 1),
 
     lifetimeBase: 2000,
     lifetimeUnit: 1000,

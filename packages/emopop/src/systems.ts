@@ -1,40 +1,43 @@
 
-import { EmopopWorld } from "./context"
+import { EmopopSystem, EmopopWorld } from "./context"
 import { DebugControlsSystem, DebugExampleSystem, DebugMatterBoundary, DebugStatsSystem } from "./systemdebug"
 import { CreateEmojiSystem, RemoveEmotionTerminatedSystem, UpdateEmotionEmitterSystem, UpdateEmotionLifetimeSystem } from "./systemlogic"
 import { MatterPhysicalSystem } from "./systemmatter"
 import { RenderBackgroundSystem, RenderEmojiSystem, RenderLoopSystem } from "./systemrendering"
 
 
-export const systems: ((world: EmopopWorld) => EmopopWorld)[] = [
+export const systems = usedSystemFilter([
     // business logic
-    UpdateEmotionEmitterSystem,
-    CreateEmojiSystem,
-    RemoveEmotionTerminatedSystem,
+    [UpdateEmotionEmitterSystem, true],
+    [CreateEmojiSystem, false],
+    [RemoveEmotionTerminatedSystem, true],
 
     // physical logic
     // PhysicsSystem,
-    MatterPhysicalSystem,
+    [MatterPhysicalSystem, true],
 
     // rendering
-    RenderLoopSystem,
-    RenderEmojiSystem,
-    RenderBackgroundSystem,
+    [RenderLoopSystem, true],
+    [RenderEmojiSystem, true],
+    [RenderBackgroundSystem, true],
 
     // time setting
-    TimeSystem,
-    UpdateEmotionLifetimeSystem,
-]
+    [TimeSystem, true],
+    [UpdateEmotionLifetimeSystem, true],
+])
 
 if (process.env.NODE_ENV === 'development') {
-    const debugSystems: [(world: EmopopWorld) => EmopopWorld, boolean][] = [
+    systems.push(...usedSystemFilter([
         [DebugControlsSystem, true],
         [DebugStatsSystem, false],
         [DebugExampleSystem, true],
         [DebugMatterBoundary, false],
-    ]
+    ]))
+}
 
-    systems.push(...debugSystems.filter(([_, enabled]) => enabled).map(([system]) => system))
+
+function usedSystemFilter(switchers: [EmopopSystem, boolean][]): EmopopSystem[] {
+    return switchers.filter(([_, enabled]) => enabled).map(([system]) => system)
 }
 
 
@@ -53,3 +56,4 @@ function TimeSystem(world: EmopopWorld) {
 
     return world
 }
+

@@ -24,7 +24,10 @@ export const rendering = memoize((world: EmopopWorld) => {
     const scene = new Scene()
     scene.background = new Color(0x111111)
 
-    const renderer = new WebGLRenderer({ antialias: true, canvas: world.dom.canvas })
+    const renderer = new WebGLRenderer({
+        antialias: true,
+        canvas: world.dom.canvas,
+    })
     renderer.setPixelRatio(devicePixelRatio)
     renderer.setSize(width / devicePixelRatio * scale, height / devicePixelRatio * scale)
 

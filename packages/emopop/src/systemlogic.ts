@@ -16,7 +16,7 @@ function createEmotionEmitterEntity(world: EmopopWorld): number {
 
     addComponent(world, EmotionEmitter, eid)
     addComponent(world, Emotion, eid)
-    // addComponent(world, Circle, eid)
+    addComponent(world, Circle, eid)
     addComponent(world, Position, eid)
 
     return eid
@@ -39,7 +39,7 @@ export function UpdateEmotionEmitterSystem(world: EmopopWorld) {
         const eid = createEmotionEmitterEntity(world)
 
         Emotion.label[eid] = emotion.label
-        // Circle.radius[eid] = emotion.radius
+        Circle.radius[eid] = emotion.radius
         vec2.copy(Position.value[eid], emotion.position)
     }
 
@@ -97,7 +97,7 @@ export function CreateEmojiSystem(world: EmopopWorld) {
 
     emitDuration += world.time.delta
 
-    if (emitDuration < 2000) {
+    if (emitDuration < 500) {
         return world
     }
 
