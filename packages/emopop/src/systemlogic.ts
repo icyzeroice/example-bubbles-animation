@@ -3,9 +3,8 @@ import { vec2 } from "gl-matrix"
 import { animate } from "popmotion"
 
 import { Circle, Emotion, EmotionEmitter, Lifetime, Position, RigidBody, RigidBodyOnStatus } from "./components"
-import { backend, EmopopWorld } from "./context"
-
-
+import { EmopopWorld } from "./context"
+import { backend } from './server'
 
 
 /* -------------------------------------------------------------------------- */

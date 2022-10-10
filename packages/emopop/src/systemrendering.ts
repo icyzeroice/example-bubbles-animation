@@ -3,15 +3,14 @@ import { memoize } from "lodash"
 import { CircleGeometry, Color, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, Texture, WebGLRenderer } from "three"
 
 import { Circle, Emotion, Position } from "./components"
-import { backend, EmopopWorld } from "./context"
+import { EmopopWorld } from "./context"
 import { createEmoji, getEmojiTexture } from "./emoji"
-
-
+import { backend } from './server'
 
 
 /* -------------------------------------------------------------------------- */
 export const rendering = memoize((world: EmopopWorld) => {
-    const { width, height } = world.screen
+    const { width, height, scale } = world.screen
 
     // origin is left-top corner
     const camera = new OrthographicCamera(
@@ -27,7 +26,7 @@ export const rendering = memoize((world: EmopopWorld) => {
 
     const renderer = new WebGLRenderer({ antialias: true, canvas: world.dom.canvas })
     renderer.setPixelRatio(devicePixelRatio)
-    renderer.setSize(width / devicePixelRatio, height / devicePixelRatio)
+    renderer.setSize(width / devicePixelRatio * scale, height / devicePixelRatio * scale)
 
     return {
         scene,

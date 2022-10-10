@@ -1,4 +1,6 @@
 import { EmotionName } from 'emoji-set'
+import { vec2 } from 'gl-matrix'
+import { memoize } from 'lodash'
 
 interface DetectionResultFrame {
     image: string
@@ -65,3 +67,47 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
 
     return
 }
+
+export interface BackendEmotion {
+    label: number
+    position: vec2
+    radius: number
+}
+
+// const mocks: () => BackendEmotion[] = () => ([{
+//     label: 1,
+//     position: vec2.set(vec2.create(), 100, 200),
+//     radius: 50,
+// }, {
+//     label: 2,
+//     position: vec2.set(vec2.create(), 200, 200),
+//     radius: 30,
+// }])
+
+
+export const backend = memoize(() => {
+    let image: HTMLImageElement
+    let labels: BackendEmotion[] = []
+
+    return {
+        get image() {
+            return image
+        },
+        get emotions(): BackendEmotion[] {
+            // return mocks()
+            return labels
+        },
+
+        set image(value: HTMLImageElement) {
+            image = value
+        },
+
+        set emotions(value: BackendEmotion[]) {
+            labels = value
+        },
+
+        dispose() {
+
+        }
+    }
+})
