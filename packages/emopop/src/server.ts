@@ -19,10 +19,8 @@ interface DetectionResultDecodedFrame {
 }
 
 
-const imageUtil = document.createElement('img')
+const imageUtil = document.querySelector<HTMLImageElement>("#background")!
 
-// @debug
-// document.querySelector('#app')!.append(imageUtil)
 
 async function decodeImage(content: string): Promise<HTMLImageElement> {
 

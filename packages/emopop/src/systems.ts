@@ -19,7 +19,7 @@ export const systems = usedSystemFilter([
     // rendering
     [RenderLoopSystem, true],
     [RenderEmojiSystem, true],
-    [RenderBackgroundSystem, true],
+    [RenderBackgroundSystem, false],
 
     // time setting
     [TimeSystem, true],

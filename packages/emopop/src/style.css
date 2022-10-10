@@ -4,15 +4,35 @@ body,
   margin: 0;
   width: 100%;
   height: 100%;
-  background-color: aliceblue;
+  /* background-color: aliceblue; */
 }
 
 #app {
-  background-color: azure;
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* background-color: azure; */
+
+  z-index: 100;
 }
 
 #canvas {
   display: block;
   margin: auto;
-  background-color: white;
+  /* background-color: white; */
+}
+
+#background-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  z-index: 10;
+}
+
+#background {
+  display: block;
+  margin: auto;
 }

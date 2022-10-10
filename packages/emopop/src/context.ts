@@ -17,6 +17,7 @@ export interface EmopopWorld extends IWorld {
   dom: {
     container: HTMLDivElement
     canvas: HTMLCanvasElement
+    background: HTMLImageElement
   },
 
   screen: {
@@ -52,7 +53,8 @@ export const TheWorld = createWorld<EmopopWorld>({
   },
   dom: {
     container: document.querySelector<HTMLDivElement>('#app')!,
-    canvas: document.querySelector("canvas")!
+    canvas: document.querySelector("canvas")!,
+    background: document.querySelector("#background")!
   },
   screen: {
     width: 0,

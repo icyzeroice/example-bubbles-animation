@@ -1,6 +1,6 @@
 import { defineQuery, enterQuery, exitQuery } from "bitecs"
 import { memoize } from "lodash"
-import { CircleGeometry, Color, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, Texture, WebGLRenderer } from "three"
+import { CircleGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, Texture, WebGLRenderer } from "three"
 
 import { Circle, Emotion, Position } from "./components"
 import { EmopopWorld } from "./context"
@@ -22,14 +22,20 @@ export const rendering = memoize((world: EmopopWorld) => {
     camera.up.set(0, 0, 1)
 
     const scene = new Scene()
-    scene.background = new Color(0x111111)
 
     const renderer = new WebGLRenderer({
+        alpha: true,
         antialias: true,
         canvas: world.dom.canvas,
     })
     renderer.setPixelRatio(devicePixelRatio)
-    renderer.setSize(width / devicePixelRatio * scale, height / devicePixelRatio * scale)
+    const viewportWidth = width / devicePixelRatio * scale
+    const viewportHeight = height / devicePixelRatio * scale
+    renderer.setSize(viewportWidth, viewportHeight)
+    renderer.setClearColor(0x000000, 0)
+
+    world.dom.background.style.width = viewportWidth + 'px'
+    world.dom.background.style.height = viewportHeight + 'px'
 
     return {
         scene,
@@ -160,6 +166,10 @@ const background = memoize((world: EmopopWorld) => {
 }, (world) => world.name)
 
 
+/**
+ * @deprecated
+ * 用 Texture 高频更新图片，链路长，性能差（往往 CPU 占用 100% 也不够）
+ */
 export function RenderBackgroundSystem(world: EmopopWorld) {
     background(world).update(backend().image)
     return world
