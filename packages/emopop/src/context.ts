@@ -62,11 +62,12 @@ export const TheWorld = createWorld<EmopopWorld>({
     scale: 1,
   },
 
+  // 在这里设置没用，要到初始化逻辑中设置
   settings: {
     massUnit: 1,
     radiusUnit: 1,
-    defaultVelocity: vec2.set(vec2.create(), 0, 2),
-    gravity: vec2.set(vec2.create(), 0, 1),
+    defaultVelocity: vec2.set(vec2.create(), 0, 0),
+    gravity: vec2.set(vec2.create(), 0, 0.1),
 
     lifetimeBase: 2000,
     lifetimeUnit: 1000,

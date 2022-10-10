@@ -9,7 +9,7 @@ import { RenderBackgroundSystem, RenderEmojiSystem, RenderLoopSystem } from "./s
 export const systems = usedSystemFilter([
     // business logic
     [UpdateEmotionEmitterSystem, true],
-    [CreateEmojiSystem, false],
+    [CreateEmojiSystem, true],
     [RemoveEmotionTerminatedSystem, true],
 
     // physical logic

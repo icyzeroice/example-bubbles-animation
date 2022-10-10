@@ -22,9 +22,9 @@ const onStart = once((image: HTMLImageElement) => {
     TheWorld.screen.scale = scale
     TheWorld.screen.width = width
     TheWorld.screen.height = height
-    TheWorld.settings.radiusUnit = Math.ceil(Math.min(width, height) * 0.02)
-    TheWorld.settings.defaultVelocity[1] = Math.ceil(height / 4)
-    TheWorld.settings.gravity[1] = Math.ceil(height / 4)
+    TheWorld.settings.radiusUnit = Math.ceil(Math.min(width, height) * 0.015)
+    // TheWorld.settings.defaultVelocity[1] = Math.ceil(height / 500)
+    // TheWorld.settings.gravity[1] = Math.ceil(height / 500)
 
     MainScene()
 

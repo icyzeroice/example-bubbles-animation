@@ -12,6 +12,7 @@ export const EmotionEmitter = defineComponent()
 export const Lifetime = defineComponent({
     default: Types.f32,
     remaining: Types.f32,
+    protecting: Types.f32,
 })
 
 export const Circle = defineComponent({

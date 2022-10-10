@@ -21,6 +21,9 @@ const bodyPool = memoize((_: EmopopWorld) => new Bimap<number, Matter.Body>(), (
 
 export const engine = memoize((world: EmopopWorld) => {
     const matterEngine = Engine.create()
+    matterEngine.gravity.x = world.settings.gravity[0]
+    matterEngine.gravity.y = world.settings.gravity[1]
+
     const borderThickness = 10
     const ceiling = Bodies.rectangle(
         world.screen.width / 2,
