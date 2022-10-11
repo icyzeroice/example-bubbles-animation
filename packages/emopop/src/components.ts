@@ -24,7 +24,7 @@ export const Position = defineComponent({
 })
 
 export const RigidBody = defineComponent({
-    mass: Types.i8,
+    mass: Types.ui32,
     velocity: [Types.f32, 2],
     acceleration: [Types.f32, 2],
 

@@ -79,6 +79,10 @@ export const engine = memoize((world: EmopopWorld) => {
             Body.setStatic(pair.bodyA, true)
             Body.setStatic(pair.bodyB, true)
 
+            if (RigidBody.on[eidA] === RigidBodyOnStatus.OFF || RigidBody.on[eidB] === RigidBodyOnStatus.OFF) {
+                continue
+            }
+
             RigidBody.on[eidA] = RigidBodyOnStatus.OFF
             RigidBody.on[eidB] = RigidBodyOnStatus.OFF
 
@@ -108,7 +112,7 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     RigidBody.on[merged] = RigidBodyOnStatus.OFF
 
     const prevPosition = Position.value[bigger]
-    const nextPosition = vec2.lerp(vec2.create(), Position.value[bigger], Position.value[smaller], 0.5)
+    const nextPosition = vec2.lerp(vec2.create(), Position.value[bigger], Position.value[smaller], Circle.radius[smaller] / (Circle.radius[bigger] + Circle.radius[smaller]))
 
     vec2.copy(Position.value[merged], prevPosition)
 
@@ -116,7 +120,9 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     RigidBody.mass[merged] = nextMass
 
     const prevRadius = Circle.radius[bigger]
-    const nextRadius = world.settings.radiusUnit * Math.sqrt(nextMass)
+
+    // HACK: prevent the mass being out of range
+    const nextRadius = world.settings.radiusUnit * Math.sqrt(Math.min(nextMass, 1000))
     Circle.radius[merged] = prevRadius
 
     const initLifetime = world.settings.lifetimeBase + world.settings.lifetimeUnit * nextMass

@@ -28,9 +28,9 @@ export const systems = usedSystemFilter([
 
 if (process.env.NODE_ENV === 'development') {
     systems.push(...usedSystemFilter([
-        [DebugControlsSystem, true],
+        [DebugControlsSystem, false],
         [DebugStatsSystem, false],
-        [DebugExampleSystem, true],
+        [DebugExampleSystem, false],
         [DebugMatterBoundary, false],
     ]))
 }
