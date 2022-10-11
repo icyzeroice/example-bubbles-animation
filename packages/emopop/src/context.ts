@@ -69,7 +69,7 @@ export const TheWorld = createWorld<EmopopWorld>({
     defaultVelocity: vec2.set(vec2.create(), 0, 0),
     gravity: vec2.set(vec2.create(), 0, 0.1),
 
-    lifetimeBase: 2000,
+    lifetimeBase: 4000,
     lifetimeUnit: 1000,
   }
 })
