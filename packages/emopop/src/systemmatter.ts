@@ -73,6 +73,10 @@ export const engine = memoize((world: EmopopWorld) => {
                 continue
             }
 
+            if (Position.value[eidA][1] < world.screen.height * 0.7 && Position.value[eidB][1] < world.screen.width * 0.7) {
+                continue
+            }
+
             // merge the same ones
             // 动画过程可以将物体设置为静止
             // 同时增加动画类型和动画 tween 倒计时 (duration, start properties, end propertis)
@@ -120,6 +124,11 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     RigidBody.mass[merged] = nextMass
 
     const prevRadius = Circle.radius[bigger]
+
+    // if (nextMass >= 10) {
+    //     Lifetime.remaining[merged] = 0
+    //     return merged
+    // }
 
     // HACK: prevent the mass being out of range
     const nextRadius = world.settings.radiusUnit * Math.sqrt(Math.min(nextMass, 100))

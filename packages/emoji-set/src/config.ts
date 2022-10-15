@@ -29,7 +29,7 @@ export const EmojiConfigSet: EmojiConfig[] = [
     filename: "1f600.svg",
     svg: emoji_1f600,
     alias: 'Happiness',
-    aliases: ['Happiness', 'Surprise']
+    aliases: ['Happiness']
   },
   {
     name: "slightly frowning face",
@@ -45,7 +45,7 @@ export const EmojiConfigSet: EmojiConfig[] = [
     filename: "1f621.svg",
     svg: emoji_1f621,
     alias: 'Anger',
-    aliases: ['Anger', 'Contempt']
+    aliases: ['Anger', 'Contempt', 'Disgust']
   },
   {
     name: "slightly smiling face",
@@ -53,7 +53,7 @@ export const EmojiConfigSet: EmojiConfig[] = [
     filename: "1f642.svg",
     svg: emoji_1f642,
     alias: 'Disgust',
-    aliases: ['Disgust']
+    aliases: ['Surprise']
   },
   {
     name: "neutral face",
