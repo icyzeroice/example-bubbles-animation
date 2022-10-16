@@ -1,4 +1,4 @@
-import { addComponent, addEntity, defineQuery, enterQuery, exitQuery, removeComponent, removeEntity } from "bitecs"
+import { addComponent, addEntity, defineQuery, enterQuery, exitQuery, removeEntity } from "bitecs"
 import MatterAttractors from 'matter-attractors'
 import { vec2 } from "gl-matrix"
 import Matter, { Engine, Bodies, World, Vector, Events, Body } from 'matter-js'
