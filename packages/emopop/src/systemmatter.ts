@@ -1,6 +1,6 @@
 import { defineQuery, enterQuery, exitQuery, removeEntity } from "bitecs"
 import { vec2 } from "gl-matrix"
-import Matter, { Engine, Bodies, World, Vector, Events, Body } from 'matter-js'
+import Matter, { Engine, Bodies, World, Vector, Events, Body, Sleeping } from 'matter-js'
 import { isUndefined, memoize } from "lodash"
 import { animate } from "popmotion"
 
@@ -83,20 +83,15 @@ export const engine = memoize((world: EmopopWorld) => {
             Body.setStatic(pair.bodyA, true)
             Body.setStatic(pair.bodyB, true)
 
+            // Sleeping.set(pair.bodyA, true)
+            // Sleeping.set(pair.bodyB, true)
+
             if (RigidBody.on[eidA] === RigidBodyOnStatus.OFF || RigidBody.on[eidB] === RigidBodyOnStatus.OFF) {
                 continue
             }
 
             RigidBody.on[eidA] = RigidBodyOnStatus.OFF
             RigidBody.on[eidB] = RigidBodyOnStatus.OFF
-
-            // addComponent(world, AnimationTicker, eidA)
-            // AnimationTicker.total[eidA] = 1000
-            // AnimationTicker.progress[eidA] = 0
-
-            // addComponent(world, AnimationTicker, eidB)
-            // AnimationTicker.total[eidB] = 1000
-            // AnimationTicker.progress[eidB] = 0
 
             if (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) {
                 createMergedEmotionEntity(world, eidA, eidB)
@@ -124,11 +119,6 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     RigidBody.mass[merged] = nextMass
 
     const prevRadius = Circle.radius[bigger]
-
-    // if (nextMass >= 10) {
-    //     Lifetime.remaining[merged] = 0
-    //     return merged
-    // }
 
     // HACK: prevent the mass being out of range
     const nextRadius = world.settings.radiusUnit * Math.sqrt(Math.min(nextMass, 100))
