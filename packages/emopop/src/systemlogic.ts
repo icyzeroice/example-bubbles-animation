@@ -27,7 +27,12 @@ export function UpdateEmotionEmitterSystem(world: EmopopWorld) {
         const eid = createEmotionEmitterEntity(world)
 
         Emotion.label[eid] = emotion.label
-        Circle.radius[eid] = emotion.radius
+
+
+        if (world.features.coverEmoji) {
+            Circle.radius[eid] = emotion.radius
+        }
+
         vec2.copy(Position.value[eid], emotion.position)
     }
 
@@ -39,7 +44,11 @@ function createEmotionEmitterEntity(world: EmopopWorld): number {
 
     addComponent(world, EmotionEmitter, eid)
     addComponent(world, Emotion, eid)
-    addComponent(world, Circle, eid)
+
+    if (world.features.coverEmoji) {
+        addComponent(world, Circle, eid)
+    }
+
     addComponent(world, Position, eid)
 
     return eid
@@ -53,10 +62,16 @@ function createEmotionEmitterEntity(world: EmopopWorld): number {
 const velocityOrigin = vec2.set(vec2.create(), 0, 0)
 const velocityRange = 60 /** degree */ / 180 * Math.PI /** radian */
 
+let emitDelay = 5000
 let emitDuration = 0
 
 export function CreateEmojiSystem(world: EmopopWorld) {
     const ents = queryEmotionEmitter(world)
+
+    if (emitDelay > 0) {
+        emitDelay -= world.time.delta
+        return world
+    }
 
     emitDuration += world.time.delta
 

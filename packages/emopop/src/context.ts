@@ -39,6 +39,10 @@ export interface EmopopWorld extends IWorld {
     lifetimeBase: number
     // milliseconds
     lifetimeUnit: number
+  },
+
+  features: {
+    coverEmoji: boolean
   }
 }
 
@@ -73,6 +77,10 @@ export const TheWorld = createWorld<EmopopWorld>({
 
     lifetimeBase: 4000,
     lifetimeUnit: 1000,
+  },
+
+  features: {
+    coverEmoji: false,
   }
 })
 

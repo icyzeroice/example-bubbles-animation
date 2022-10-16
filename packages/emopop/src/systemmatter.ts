@@ -1,7 +1,7 @@
 import { addComponent, addEntity, defineQuery, enterQuery, exitQuery, removeEntity } from "bitecs"
 import MatterAttractors from 'matter-attractors'
 import { vec2 } from "gl-matrix"
-import Matter, { Engine, Bodies, World, Vector, Events, Body, Constraint } from 'matter-js'
+import Matter, { Engine, Bodies, World, Vector, Events, Constraint } from 'matter-js'
 import { isUndefined, memoize } from "lodash"
 import { animate } from "popmotion"
 
@@ -98,10 +98,8 @@ export const engine = memoize((world: EmopopWorld) => {
             meringBag(world).add(eidB)
 
             if (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) {
-                Body.setStatic(pair.bodyB, true)
                 createMergedEmotionEntity(world, eidA, eidB)
             } else {
-                Body.setStatic(pair.bodyA, true)
                 createMergedEmotionEntity(world, eidB, eidA)
             }
         }
@@ -209,11 +207,6 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     Lifetime.default[merged] = initLifetime
     Lifetime.remaining[merged] = initLifetime
 
-    let prev = {
-        radius: 0,
-        x: 0,
-        y: 0,
-    }
     animate<{ radius: number, x: number, y: number }>({
         from: {
             radius: prevRadius,
@@ -226,12 +219,8 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
             y: offset[1],
         },
         onUpdate(latest) {
-            Position.value[merged][0] += (latest.x - prev.x)
-            Position.value[merged][1] += (latest.y - prev.y)
+            vec2.copy(Position.value[merged], vec2.add(vec2.create(), Position.value[bigger], [latest.x, latest.y]))
             Circle.radius[merged] = latest.radius
-
-            prev.x = latest.x
-            prev.y = latest.y
         },
         onComplete() {
             removeEntity(world, bigger)
