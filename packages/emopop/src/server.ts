@@ -42,6 +42,20 @@ async function decodeImage(content: string): Promise<HTMLImageElement> {
 
 
 export function createDetectionResultService(onmessage: (frame: DetectionResultDecodedFrame) => void) {
+    if (process.env.NODE_ENV === 'development') {
+        setInterval(() => {
+            onmessage({
+                image: { width: 1920, height: 1080 } as unknown as HTMLImageElement,
+                boxes: [[1600, 900, 1700, 1000], [1600, 900, 1750, 1000]],
+                emotions: ['Anger', 'Contempt'],
+                timestamp: performance.now()
+            })
+        }, 1000)
+
+
+        return
+    }
+
     // const channel = new WebSocket(`ws://${window.location.host}/camera`)
     const channel = new WebSocket(`ws://127.0.0.1:8000/camera`)
 

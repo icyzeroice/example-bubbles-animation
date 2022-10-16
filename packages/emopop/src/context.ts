@@ -67,7 +67,7 @@ export const TheWorld = createWorld<EmopopWorld>({
     massUnit: 1,
     radiusUnit: 1,
     defaultVelocity: vec2.set(vec2.create(), 0, 0),
-    gravity: vec2.set(vec2.create(), 0, 0.1),
+    gravity: vec2.set(vec2.create(), 0, 0.5),
 
     lifetimeBase: 4000,
     lifetimeUnit: 1000,

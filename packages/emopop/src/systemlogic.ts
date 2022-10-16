@@ -85,7 +85,9 @@ function initializeEmotionEntityFromEmotionEmitter(world: EmopopWorld, emitterId
 
     vec2.copy(RigidBody.velocity[emotionId], randomVelocity)
 
-    const initLifetime = world.settings.lifetimeBase + world.settings.lifetimeUnit * world.settings.massUnit
+    // const initLifetime = world.settings.lifetimeBase + world.settings.lifetimeUnit * world.settings.massUnit
+    const initLifetime = world.settings.lifetimeBase
+
     Lifetime.default[emotionId] = initLifetime
     Lifetime.remaining[emotionId] = initLifetime
 }

@@ -134,7 +134,9 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     const nextRadius = world.settings.radiusUnit * Math.sqrt(Math.min(nextMass, 100))
     Circle.radius[merged] = prevRadius
 
-    const initLifetime = world.settings.lifetimeBase + world.settings.lifetimeUnit * nextMass
+    // const initLifetime = world.settings.lifetimeBase + world.settings.lifetimeUnit * nextMass
+    const initLifetime = world.settings.lifetimeBase
+
     Lifetime.default[merged] = initLifetime
     Lifetime.remaining[merged] = initLifetime
 

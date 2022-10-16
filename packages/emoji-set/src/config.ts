@@ -87,10 +87,12 @@ enum EmotionEnum {
 export type EmotionName = keyof typeof EmotionEnum
 
 // WARNING: the index may be changed when typescript has breaking changes
-export function getEmotionIndex(name: string): number {
-  return EmotionEnum[name as EmotionName]
+export function getEmotionIndex(name: EmotionName): number {
+  // return EmotionEnum[name as EmotionName]
+  return EmojiConfigSet.findIndex((config) => config.aliases.includes(name))
 }
 
 export function getEmotionName(index: number): EmotionName {
-  return EmotionEnum[index] as EmotionName
+  // return EmotionEnum[index] as EmotionName
+  return EmojiConfigSet[index].alias
 }
