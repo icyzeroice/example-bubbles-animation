@@ -27,6 +27,7 @@ export interface EmopopWorld extends IWorld {
   },
 
   settings: {
+    maxMass: number
     massUnit: number
     radiusUnit: number
 
@@ -64,6 +65,7 @@ export const TheWorld = createWorld<EmopopWorld>({
 
   // 在这里设置没用，要到初始化逻辑中设置
   settings: {
+    maxMass: 50,
     massUnit: 1,
     radiusUnit: 1,
     defaultVelocity: vec2.set(vec2.create(), 0, 0),

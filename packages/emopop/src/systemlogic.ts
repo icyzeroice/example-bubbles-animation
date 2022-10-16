@@ -150,8 +150,8 @@ export function RemoveEmotionTerminatedSystem(world: EmopopWorld) {
         }
 
         // 过大的话就消失
-        if (RigidBody.mass[eid] > 10) {
-            Lifetime.remaining[eid] = 100
+        if (RigidBody.mass[eid] > world.settings.maxMass) {
+            Lifetime.remaining[eid] = 10
         }
     }
 
