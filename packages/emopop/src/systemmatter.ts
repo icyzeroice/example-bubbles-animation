@@ -169,6 +169,7 @@ export function MatterPhysicalSystem(world: EmopopWorld) {
         }
 
         vec2.set(Position.value[eid], body.position.x, body.position.y)
+        vec2.set(RigidBody.velocity[eid], body.velocity.x, body.velocity.y)
     }
 
     return world
@@ -223,15 +224,15 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
             Circle.radius[merged] = latest.radius
         },
         onComplete() {
+            // add to physical system
+            addComponent(world, RigidBody, merged)
+            RigidBody.mass[merged] = nextMass
+            vec2.set(RigidBody.velocity[merged], 0, RigidBody.velocity[bigger][1])
+
             removeEntity(world, bigger)
             removeEntity(world, smaller)
             meringBag(world).delete(bigger)
             meringBag(world).delete(smaller)
-
-            // add to physical system
-            addComponent(world, RigidBody, merged)
-            RigidBody.mass[merged] = nextMass
-            vec2.set(RigidBody.velocity[merged], 0, 0)
         },
         duration: 200
     })
