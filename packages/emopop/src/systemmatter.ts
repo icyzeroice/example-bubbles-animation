@@ -192,40 +192,17 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
             y: nextPosition[1],
         },
         onUpdate(latest) {
-            const body = bodyPool(world).getValue(merged)
-
-            if (body) {
-                body.position.x = latest.x
-                body.position.y = latest.y
-                body.circleRadius = latest.radius
-            }
-
+            vec2.set(Position.value[merged], latest.x, latest.y)
             Circle.radius[merged] = latest.radius
         },
         onComplete() {
             removeEntity(world, bigger)
             removeEntity(world, smaller)
 
+            // add to physical system
             addComponent(world, RigidBody, merged)
             RigidBody.mass[merged] = nextMass
             vec2.set(RigidBody.velocity[merged], 0, 0)
-
-            const body = bodyPool(world).getValue(merged)
-
-            if (body) {
-                World.remove(engine(world).world, body)
-                const newBody = Bodies.circle(
-                    Position.value[merged][0],
-                    Position.value[merged][1],
-                    Circle.radius[merged],
-                    {
-                        velocity: Vector.create(RigidBody.velocity[merged][0], RigidBody.velocity[merged][1]),
-                    },
-                )
-
-                World.add(engine(world).world, newBody)
-                bodyPool(world).setPair(merged, newBody)
-            }
         },
     })
 
