@@ -1,6 +1,6 @@
 import { defineQuery, enterQuery, exitQuery, removeEntity } from "bitecs"
 import { vec2 } from "gl-matrix"
-import Matter, { Engine, Bodies, World, Vector, Events, Body } from 'matter-js'
+import Matter, { Engine, Bodies, World, Vector, Events, Body, Constraint } from 'matter-js'
 import { isUndefined, memoize } from "lodash"
 import { animate } from "popmotion"
 
@@ -18,6 +18,7 @@ const queryCircleBodies = defineQuery([RigidBody, Circle, Position])
 const queryCircleBodiesCreated = enterQuery(queryCircleBodies)
 const queryCircleBodiesRemoved = exitQuery(queryCircleBodies)
 const bodyPool = memoize((_: EmopopWorld) => new Bimap<number, Matter.Body>(), (world) => world.name)
+const jointPool = memoize((_: EmopopWorld) => new Map<number, Matter.Constraint>(), (world) => world.name)
 
 export const engine = memoize((world: EmopopWorld) => {
     const matterEngine = Engine.create()
@@ -73,16 +74,6 @@ export const engine = memoize((world: EmopopWorld) => {
                 continue
             }
 
-            if (Position.value[eidA][1] < world.screen.height * 0.7 && Position.value[eidB][1] < world.screen.width * 0.7) {
-                continue
-            }
-
-            // merge the same ones
-            // 动画过程可以将物体设置为静止
-            // 同时增加动画类型和动画 tween 倒计时 (duration, start properties, end propertis)
-            Body.setStatic(pair.bodyA, true)
-            Body.setStatic(pair.bodyB, true)
-
             if (RigidBody.on[eidA] === RigidBodyOnStatus.OFF || RigidBody.on[eidB] === RigidBodyOnStatus.OFF) {
                 continue
             }
@@ -90,18 +81,10 @@ export const engine = memoize((world: EmopopWorld) => {
             RigidBody.on[eidA] = RigidBodyOnStatus.OFF
             RigidBody.on[eidB] = RigidBodyOnStatus.OFF
 
-            // addComponent(world, AnimationTicker, eidA)
-            // AnimationTicker.total[eidA] = 1000
-            // AnimationTicker.progress[eidA] = 0
-
-            // addComponent(world, AnimationTicker, eidB)
-            // AnimationTicker.total[eidB] = 1000
-            // AnimationTicker.progress[eidB] = 0
-
             if (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) {
-                createMergedEmotionEntity(world, eidA, eidB)
+                createMergedEmotionEntity(world, eidA, eidB, pair.bodyA, pair.bodyB)
             } else {
-                createMergedEmotionEntity(world, eidB, eidA)
+                createMergedEmotionEntity(world, eidB, eidA, pair.bodyB, pair.bodyA)
             }
         }
     })
@@ -109,26 +92,25 @@ export const engine = memoize((world: EmopopWorld) => {
     return matterEngine
 }, (world) => world.name)
 
-function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: number): number {
+function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: number, biggerBody: Body, smallerBody: Body): number {
     const merged = createEmotionEntity(world)
 
     Emotion.label[merged] = Emotion.label[bigger]
     RigidBody.on[merged] = RigidBodyOnStatus.OFF
 
-    const prevPosition = Position.value[bigger]
-    const nextPosition = vec2.lerp(vec2.create(), Position.value[bigger], Position.value[smaller], Circle.radius[smaller] / (Circle.radius[bigger] + Circle.radius[smaller]))
+    const offset = vec2.lerp(
+        vec2.create(),
+        vec2.set(vec2.create(), 0, 0),
+        vec2.subtract(vec2.create(), Position.value[smaller], Position.value[bigger]),
+        Circle.radius[smaller] / (Circle.radius[bigger] + Circle.radius[smaller])
+    )
 
-    vec2.copy(Position.value[merged], prevPosition)
+    vec2.copy(Position.value[merged], Position.value[bigger])
 
     const nextMass = RigidBody.mass[bigger] + RigidBody.mass[smaller]
     RigidBody.mass[merged] = nextMass
 
     const prevRadius = Circle.radius[bigger]
-
-    // if (nextMass >= 10) {
-    //     Lifetime.remaining[merged] = 0
-    //     return merged
-    // }
 
     // HACK: prevent the mass being out of range
     const nextRadius = world.settings.radiusUnit * Math.sqrt(Math.min(nextMass, 100))
@@ -140,24 +122,47 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     Lifetime.default[merged] = initLifetime
     Lifetime.remaining[merged] = initLifetime
 
+
+    // Body.setStatic(pair.bodyA, true)
+    Body.setStatic(biggerBody, true)
+
+    const constraint = Constraint.create({
+        bodyA: biggerBody,
+        bodyB: smallerBody,
+        length: Circle.radius[bigger] + Circle.radius[smaller],
+        stiffness: 0.2,
+    })
+
+    World.add(engine(world).world, constraint)
+    jointPool(world).set(bigger, constraint)
+    jointPool(world).set(smaller, constraint)
+
+    let prev = {
+        radius: 0,
+        x: 0,
+        y: 0
+    }
+
     animate<{ radius: number, x: number, y: number }>({
         from: {
             radius: prevRadius,
-            x: prevPosition[0],
-            y: prevPosition[1],
+            x: 0,
+            y: 0,
         },
         to: {
             radius: nextRadius,
-            x: nextPosition[0],
-            y: nextPosition[1],
+            x: offset[0],
+            y: offset[1],
         },
         onUpdate(latest) {
             const body = bodyPool(world).getValue(merged)
 
             if (body) {
-                body.position.x = latest.x
-                body.position.y = latest.y
+                body.position.x += (latest.x - prev.x)
+                body.position.y += (latest.y - prev.y)
                 body.circleRadius = latest.radius
+
+                prev = latest
             }
 
             Circle.radius[merged] = latest.radius
@@ -204,6 +209,11 @@ export function MatterPhysicalSystem(world: EmopopWorld) {
         World.remove(engine(world).world, body)
 
         bodyPool(world).deleteKey(eid)
+
+        if (jointPool(world).has(eid)) {
+            World.remove(engine(world).world, jointPool(world).get(eid)!)
+            jointPool(world).delete(eid)
+        }
     }
 
     const entsCreated = queryCircleBodiesCreated(world)
@@ -214,9 +224,12 @@ export function MatterPhysicalSystem(world: EmopopWorld) {
             Position.value[eid][1],
             Circle.radius[eid],
             {
-                isStatic: !RigidBody.on[eid],
+                isStatic: false,
                 mass: RigidBody.mass[eid],
                 velocity: Vector.create(RigidBody.velocity[eid][0], RigidBody.velocity[eid][1]),
+                collisionFilter: {
+                    category: RigidBody.on[eid] === RigidBodyOnStatus.OFF ? 0b001 : 0b010
+                }
             },
         )
 

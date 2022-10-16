@@ -15,6 +15,14 @@ export const Lifetime = defineComponent({
     protected: Types.f32,
 })
 
+export const Merging = defineComponent()
+
+export const Merged = defineComponent({
+    parent: Types.eid
+})
+
+
+
 export const Circle = defineComponent({
     radius: Types.f32
 })
