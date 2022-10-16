@@ -64,10 +64,13 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
 
         const image = await decodeImage(frame.image)
 
+        // 后端可能会传不同的长度，所以这里做安全处理
+        const faceCount = Math.min(frame.detection.boxes.length, frame.detection.emotions.length)
+
         onmessage({
             image: image,
-            boxes: frame.detection.boxes.slice(0, frame.detection.emotions.length),
-            emotions: frame.detection.emotions,
+            boxes: frame.detection.boxes.slice(0, faceCount),
+            emotions: frame.detection.emotions.slice(0, faceCount),
             timestamp: frame.timestamp
         })
     }
