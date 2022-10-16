@@ -1038,6 +1038,7 @@ __metadata:
     emoji-set: "workspace:^"
     gl-matrix: ^3.4.3
     lodash: ^4.17.21
+    matter-attractors: ^0.1.6
     matter-js: ^0.18.0
     paper: ^0.12.15
     popmotion: ^11.0.5
@@ -2430,6 +2431,13 @@ __metadata:
     socks-proxy-agent: ^6.1.1
     ssri: ^9.0.0
   checksum: 42825d119a7e4f5b1a8e7048a86d328cd36bb1ff875d155ce7079d9a0afdd310c198fb310096af358cfa9ecdf643cecf960380686792457dccb36e17efe89eb0
+  languageName: node
+  linkType: hard
+
+"matter-attractors@npm:^0.1.6":
+  version: 0.1.6
+  resolution: "matter-attractors@npm:0.1.6"
+  checksum: d0c7ce1cb375f26d7ef3ae72b7421a7a96d893894db0f5d844ea7b72810127a785d9e767feedb3e9113c94b8ad7f788c3c2c5ac39964ac6a87bbe180940d4bc2
   languageName: node
   linkType: hard
 

@@ -10,8 +10,12 @@ export const Emotion = defineComponent({
 export const EmotionEmitter = defineComponent()
 
 export const Lifetime = defineComponent({
+    // milliseconds
     default: Types.f32,
+
+    // milliseconds
     remaining: Types.f32,
+
     protected: Types.f32,
 })
 
@@ -30,6 +34,7 @@ export const RigidBody = defineComponent({
 
     // 0 - off
     // 1 - on
+    /** @deprecated */
     on: Types.i8
 })
 

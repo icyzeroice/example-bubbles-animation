@@ -1,7 +1,7 @@
 
 import { EmopopSystem, EmopopWorld } from "./context"
 import { DebugControlsSystem, DebugExampleSystem, DebugMatterBoundary, DebugStatsSystem } from "./systemdebug"
-import { CreateEmojiSystem, RemoveEmotionTerminatedSystem, UpdateEmotionEmitterSystem, UpdateEmotionLifetimeSystem } from "./systemlogic"
+import { CreateEmojiSystem, RemoveEmotionTerminatedSystem, UpdateEmotionEmitterSystem, UpdateEmotionLifetimeAfterSystem } from "./systemlogic"
 import { MatterPhysicalSystem } from "./systemmatter"
 import { RenderBackgroundSystem, RenderEmojiSystem, RenderLoopSystem } from "./systemrendering"
 
@@ -23,7 +23,7 @@ export const systems = usedSystemFilter([
 
     // time setting
     [TimeSystem, true],
-    [UpdateEmotionLifetimeSystem, true],
+    [UpdateEmotionLifetimeAfterSystem, true],
 ])
 
 if (process.env.NODE_ENV === 'development') {

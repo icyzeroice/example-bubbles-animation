@@ -46,7 +46,7 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
         setInterval(() => {
             onmessage({
                 image: { width: 1920, height: 1080 } as unknown as HTMLImageElement,
-                boxes: [[1600, 900, 1700, 1000], [1600, 900, 1750, 1000]],
+                boxes: [[1600, 900, 1700, 1000], [1650, 900, 1750, 1000]],
                 emotions: ['Anger', 'Contempt'],
                 timestamp: performance.now()
             })
