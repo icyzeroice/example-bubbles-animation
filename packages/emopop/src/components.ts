@@ -17,6 +17,8 @@ export const Lifetime = defineComponent({
     remaining: Types.f32,
 
     protected: Types.f32,
+
+    animation: Types.f32,
 })
 
 export const Circle = defineComponent({

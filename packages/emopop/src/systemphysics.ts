@@ -13,6 +13,11 @@ import { EmopopWorld } from "./context"
 
 const queryCircleRigidBody = defineQuery([RigidBody, Circle, Position])
 
+/**
+ * @deprecated
+ * the old physics system written by myself
+ * now use matter.js system instead.
+ */
 export function PhysicsSystem(world: EmopopWorld) {
     const ents = queryCircleRigidBody(world)
 

@@ -1,8 +1,8 @@
 import { defineQuery, enterQuery, exitQuery } from "bitecs"
 import { memoize } from "lodash"
-import { CircleGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, Texture, WebGLRenderer } from "three"
+import { CircleGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, ShaderMaterial, Texture, WebGLRenderer } from "three"
 
-import { Circle, Emotion, Position } from "./components"
+import { Circle, Emotion, Lifetime, Position } from "./components"
 import { EmopopWorld } from "./context"
 import { createEmoji, getEmojiTexture } from "./emoji"
 import { backend } from './server'
@@ -54,7 +54,7 @@ export function RenderLoopSystem(world: EmopopWorld) {
 /*                             render emoji system                            */
 /* -------------------------------------------------------------------------- */
 const shapePool = memoize((_: EmopopWorld) =>
-    new Map<number, Mesh<CircleGeometry, MeshBasicMaterial>>()
+    new Map<number, Mesh<CircleGeometry, ShaderMaterial>>()
     , (world) => world.name)
 
 const queryEmoji = defineQuery([Emotion, Circle, Position])
@@ -125,7 +125,8 @@ export function RenderEmojiSystem(world: EmopopWorld) {
             continue
         }
 
-        mesh.material.map = texture
+        mesh.material.uniforms.uTexture.value = texture
+        mesh.material.uniforms.uProgress.value = Lifetime.animation[eid]
         mesh.position.set(Position.value[eid][0], Position.value[eid][1], 0)
 
         const radius = Circle.radius[eid]
@@ -139,6 +140,9 @@ export function RenderEmojiSystem(world: EmopopWorld) {
 /* -------------------------------------------------------------------------- */
 /*                         render background system                           */
 /* -------------------------------------------------------------------------- */
+/**
+ * @deprecated
+ */
 const background = memoize((world: EmopopWorld) => {
     const geometry = new PlaneGeometry(world.screen.width, world.screen.height)
     const material = new MeshBasicMaterial({

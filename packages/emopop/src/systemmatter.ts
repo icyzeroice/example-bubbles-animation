@@ -207,6 +207,7 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
 
     Lifetime.default[merged] = initLifetime
     Lifetime.remaining[merged] = initLifetime
+    Lifetime.animation[merged] = 0
 
     animate<{ radius: number, x: number, y: number }>({
         from: {

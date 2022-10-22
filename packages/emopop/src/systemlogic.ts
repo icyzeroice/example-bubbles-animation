@@ -121,6 +121,7 @@ function copyEmotionFromEmitter(world: EmopopWorld, emitterId: number, emotionId
 
     Lifetime.default[emotionId] = initLifetime
     Lifetime.remaining[emotionId] = initLifetime
+    Lifetime.animation[emotionId] = 0
 }
 
 
@@ -153,10 +154,10 @@ export function RemoveEmotionTerminatedSystem(world: EmopopWorld) {
             removeComponent(world, RigidBody, eid)
 
             animate({
-                from: Circle.radius[eid],
+                from: 0,
                 to: 1,
                 onUpdate(latest) {
-                    Circle.radius[eid] = latest
+                    Lifetime.animation[eid] = latest
                 },
                 onComplete() {
                     removeEntity(world, eid)
