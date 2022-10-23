@@ -2,7 +2,7 @@ import { addComponent, addEntity, defineQuery, enterQuery, exitQuery, removeEnti
 import MatterAttractors from 'matter-attractors'
 import { vec2 } from "gl-matrix"
 import Matter, { Engine, Bodies, World, Vector, Events, Constraint } from 'matter-js'
-import { isUndefined, memoize } from "lodash"
+import { isUndefined, memoize, merge } from "lodash"
 import { animate } from "popmotion"
 
 import { Circle, Emotion, Lifetime, Position, RigidBody } from "./components"
@@ -184,14 +184,11 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
 
     Emotion.label[merged] = Emotion.label[bigger]
 
-    const offset = vec2.lerp(
-        vec2.create(),
-        [0, 0],
-        vec2.subtract(vec2.create(), Position.value[smaller], Position.value[bigger]),
-        Circle.radius[smaller] / (Circle.radius[bigger] + Circle.radius[smaller])
-    )
-
-    vec2.copy(Position.value[merged], Position.value[bigger])
+    // const initLifetime = world.settings.lifetimeBase + world.settings.lifetimeUnit * nextMass
+    const initLifetime = world.settings.lifetimeBase
+    Lifetime.default[merged] = initLifetime
+    Lifetime.remaining[merged] = initLifetime
+    Lifetime.animation[merged] = 0
 
     const nextMass = RigidBody.mass[bigger] + RigidBody.mass[smaller]
     // RigidBody.mass[merged] = nextMass
@@ -202,12 +199,18 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     const nextRadius = world.settings.radiusUnit * Math.sqrt(Math.min(nextMass, world.settings.maxMass))
     Circle.radius[merged] = prevRadius
 
-    // const initLifetime = world.settings.lifetimeBase + world.settings.lifetimeUnit * nextMass
-    const initLifetime = world.settings.lifetimeBase
 
-    Lifetime.default[merged] = initLifetime
-    Lifetime.remaining[merged] = initLifetime
-    Lifetime.animation[merged] = 0
+    // init position
+    vec2.copy(Position.value[merged], Position.value[bigger])
+
+    // const offset = vec2.lerp(
+    //     vec2.create(),
+    //     [0, 0],
+    //     vec2.subtract(vec2.create(), Position.value[smaller], Position.value[bigger]),
+    //     Circle.radius[smaller] / (Circle.radius[bigger] + Circle.radius[smaller])
+    // )
+
+    const offset = [0, prevRadius - nextRadius]
 
     animate<{ radius: number, x: number, y: number }>({
         from: {
@@ -221,7 +224,11 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
             y: offset[1],
         },
         onUpdate(latest) {
-            vec2.copy(Position.value[merged], vec2.add(vec2.create(), Position.value[bigger], [latest.x, latest.y]))
+            vec2.add(
+                Position.value[merged],
+                Position.value[bigger],
+                [latest.x, latest.y]
+            )
             Circle.radius[merged] = latest.radius
         },
         onComplete() {
