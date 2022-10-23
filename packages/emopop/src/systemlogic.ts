@@ -1,5 +1,6 @@
 import { addComponent, addEntity, defineQuery, removeComponent, removeEntity } from "bitecs"
 import { vec2 } from "gl-matrix"
+import { differenceBy, intersectionBy } from "lodash"
 import { animate } from "popmotion"
 
 import { Circle, Emotion, EmotionEmitter, Lifetime, Position, RigidBody } from "./components"
@@ -15,15 +16,29 @@ const queryEmotionEmitter = defineQuery([EmotionEmitter, Emotion, Position])
 export function UpdateEmotionEmitterSystem(world: EmopopWorld) {
     const ents = queryEmotionEmitter(world)
 
-    // clean all
-    for (let index = 0; index < ents.length; index++) {
-        const eid = ents[index];
-        removeEntity(world, eid)
+    const prevs = ents.map((eid, index) => ({ label: Emotion.label[eid], index, eid }))
+    const nexts = backend().emotions.map((emo, index) => ({ label: emo.label, index }))
+
+    const needUpdate = intersectionBy(prevs, nexts, (item) => {
+        return item.index
+    })
+
+    const needRemove = differenceBy(prevs, nexts, (item) => {
+        return item.index
+    })
+
+    const needCreate = differenceBy(nexts, prevs, (item) => {
+        return item.index
+    })
+
+    // remove
+    for (let index = 0; index < needRemove.length; index++) {
+        removeEntity(world, needRemove[index].eid)
     }
 
-    // re-created all
-    for (let index = 0; index < backend().emotions.length; index++) {
-        const emotion = backend().emotions[index]
+    // create
+    for (let index = 0; index < needCreate.length; index++) {
+        const emotion = backend().emotions[needCreate[index].index]
         const eid = createEmotionEmitterEntity(world)
 
         Emotion.label[eid] = emotion.label
@@ -35,6 +50,23 @@ export function UpdateEmotionEmitterSystem(world: EmopopWorld) {
 
         vec2.copy(Position.value[eid], emotion.position)
     }
+
+
+    for (let index = 0; index < needUpdate.length; index++) {
+        const emotion = backend().emotions[needUpdate[index].index]
+        const eid = needUpdate[index].eid
+
+        Emotion.label[eid] = emotion.label
+
+
+        if (world.features.coverEmoji) {
+            Circle.radius[eid] = emotion.radius
+        }
+
+        vec2.copy(Position.value[eid], emotion.position)
+    }
+
+
 
     return world
 }

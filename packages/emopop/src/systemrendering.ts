@@ -1,8 +1,8 @@
-import { defineQuery, enterQuery, exitQuery } from "bitecs"
+import { defineQuery, enterQuery, exitQuery, hasComponent } from "bitecs"
 import { memoize } from "lodash"
 import { CircleGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, ShaderMaterial, Texture, WebGLRenderer } from "three"
 
-import { Circle, Emotion, Lifetime, Position } from "./components"
+import { Circle, Emotion, EmotionEmitter, Lifetime, Position } from "./components"
 import { EmopopWorld } from "./context"
 import { createEmoji, getEmojiTexture } from "./emoji"
 import { backend } from './server'
@@ -61,20 +61,22 @@ const queryEmoji = defineQuery([Emotion, Circle, Position])
 const queryEmojiCreated = enterQuery(queryEmoji)
 const queryEmojiRemoved = exitQuery(queryEmoji)
 
-const numberGenerator = memoize((_: EmopopWorld) => {
-    const MAX_RESULT = Number.MAX_SAFE_INTEGER - 10
-    let result = 0
+const numberGenerator = memoize((
+    min: number = 0,
+    max: number = Number.MAX_SAFE_INTEGER - 10,
+) => {
+    let result = min
 
     return {
         next() {
-            if (result > MAX_RESULT) {
-                result = 0
+            if (result > max) {
+                result = min
             }
 
             return result++
         }
     }
-}, (world) => world.name)
+}, (min, max) => `${min}, ${max}`)
 
 export function RenderEmojiSystem(world: EmopopWorld) {
     // remove
@@ -106,7 +108,9 @@ export function RenderEmojiSystem(world: EmopopWorld) {
         }
 
         // HACK: renderOrder should be managed
-        mesh.renderOrder = numberGenerator(world).next()
+        mesh.renderOrder = hasComponent(world, EmotionEmitter, eid)
+            ? numberGenerator(1000000, 1100000).next()
+            : numberGenerator(0, 999999).next()
 
         rendering(world).scene.add(mesh)
         shapePool(world).set(eid, mesh)
