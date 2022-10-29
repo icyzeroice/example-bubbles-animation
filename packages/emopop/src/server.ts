@@ -138,26 +138,32 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
         fpsRecorder().tick()
         fpsRecorder().print()
 
-        if (typeof evt.data === 'string') {
-            const frame = JSON.parse(evt.data) as DetectionResultFrame
+        try {
+            if (typeof evt.data === 'string') {
+                const frame = JSON.parse(evt.data) as DetectionResultFrame
 
-            // 后端可能会传不同的长度，所以这里做安全处理
-            const faceCount = Math.min(frame.detection.boxes.length, frame.detection.emotions.length)
+                // 后端可能会传不同的长度，所以这里做安全处理
+                const faceCount = Math.min(frame.detection.boxes.length, frame.detection.emotions.length)
 
-            lastFrame.detection = {
-                boxes: frame.detection.boxes.slice(0, faceCount),
-                emotions: frame.detection.emotions.slice(0, faceCount),
+                lastFrame.detection = {
+                    boxes: frame.detection.boxes.slice(0, faceCount),
+                    emotions: frame.detection.emotions.slice(0, faceCount),
+                }
+
+                lastFrame.timestamp = frame.timestamp
             }
 
-            lastFrame.timestamp = frame.timestamp
+            onmessage({
+                image: await readImage(evt.data !== 'string' ? evt.data : undefined),
+                boxes: lastFrame.detection.boxes,
+                emotions: lastFrame.detection.emotions,
+                timestamp: lastFrame.timestamp
+            })
+        } catch (err) {
+            console.log(err)
         }
 
-        onmessage({
-            image: await readImage(evt.data !== 'string' ? evt.data : undefined),
-            boxes: lastFrame.detection.boxes,
-            emotions: lastFrame.detection.emotions,
-            timestamp: lastFrame.timestamp
-        })
+
     }
 
     channel.onopen = function () {
