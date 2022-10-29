@@ -45,6 +45,26 @@ async function decodeImage(content: string): Promise<HTMLImageElement> {
     })
 }
 
+async function readImage(content?: Uint8Array): Promise<HTMLImageElement> {
+    if (!content) {
+        return imageUtil
+    }
+
+    imageUtil.src = URL.createObjectURL(new Blob([content], { type: 'image/jpeg' }))
+
+    return new Promise<HTMLImageElement>((resolve, reject) => {
+
+        imageUtil.onload = function () {
+            resolve(imageUtil)
+        }
+
+        imageUtil.onerror = function (err) {
+            reject(err)
+        }
+
+    })
+}
+
 const fpsRecorder = memoize(() => {
     let last = performance.now()
     let total = 0
@@ -101,12 +121,14 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
         return
     }
 
-    let lastFrame: Pick<DetectionResultFrame, 'image' | 'detection'> = {
+    let lastFrame: DetectionResultFrame = {
         image: '',
         detection: {
             boxes: [],
             emotions: [],
-        }
+        },
+        skip_detection: false,
+        timestamp: performance.now(),
     }
 
     // const channel = new WebSocket(`ws://${window.location.host}/camera`)
@@ -116,27 +138,25 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
         fpsRecorder().tick()
         fpsRecorder().print()
 
-        const frame = JSON.parse(evt.data) as DetectionResultFrame
+        if (typeof evt.data === 'string') {
+            const frame = JSON.parse(evt.data) as DetectionResultFrame
 
-        const image = await decodeImage(frame.image)
+            // 后端可能会传不同的长度，所以这里做安全处理
+            const faceCount = Math.min(frame.detection.boxes.length, frame.detection.emotions.length)
 
-        // 后端可能会传不同的长度，所以这里做安全处理
-        const faceCount = Math.min(frame.detection.boxes.length, frame.detection.emotions.length)
-
-        lastFrame.image = frame.image
-
-        if (!frame.skip_detection) {
             lastFrame.detection = {
                 boxes: frame.detection.boxes.slice(0, faceCount),
                 emotions: frame.detection.emotions.slice(0, faceCount),
             }
+
+            lastFrame.timestamp = frame.timestamp
         }
 
         onmessage({
-            image: image,
+            image: await readImage(evt.data !== 'string' ? evt.data : undefined),
             boxes: lastFrame.detection.boxes,
             emotions: lastFrame.detection.emotions,
-            timestamp: frame.timestamp
+            timestamp: lastFrame.timestamp
         })
     }
 
