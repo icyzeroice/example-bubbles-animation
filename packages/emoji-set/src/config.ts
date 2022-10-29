@@ -52,7 +52,7 @@ export const EmojiConfigSet: EmojiConfig[] = [
     unicode: "🙂",
     filename: "1f642.svg",
     svg: emoji_1f642,
-    alias: 'Disgust',
+    alias: 'Surprise',
     aliases: ['Surprise']
   },
   {

@@ -51,7 +51,7 @@ export function UpdateEmotionEmitterSystem(world: EmopopWorld) {
         vec2.copy(Position.value[eid], emotion.position)
     }
 
-
+    // update
     for (let index = 0; index < needUpdate.length; index++) {
         const emotion = backend().emotions[needUpdate[index].index]
         const eid = needUpdate[index].eid

@@ -130,7 +130,8 @@ export function RenderEmojiSystem(world: EmopopWorld) {
         }
 
         mesh.material.uniforms.uTexture.value = texture
-        mesh.material.uniforms.uProgress.value = Lifetime.animation[eid]
+        // HACK: 有时候 EmotionEmittor 的也会被设置成 1 不知道为啥
+        mesh.material.uniforms.uProgress.value = hasComponent(world, EmotionEmitter, eid) ? 0 : Lifetime.animation[eid]
         mesh.position.set(Position.value[eid][0], Position.value[eid][1], 0)
 
         const radius = Circle.radius[eid]

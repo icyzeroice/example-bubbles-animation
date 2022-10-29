@@ -45,6 +45,28 @@ async function decodeImage(content: string): Promise<HTMLImageElement> {
     })
 }
 
+const fpsRecorder = memoize(() => {
+    let last = performance.now()
+    let total = 0
+    let fps = 0
+
+    return {
+        tick() {
+            const current = performance.now()
+            total += (current - last)
+            fps += 1
+        },
+
+        print() {
+            if (total > 1000) {
+                console.log('fps', fps)
+                total = 0
+                fps = 0
+            }
+        }
+    }
+})
+
 
 export function createDetectionResultService(onmessage: (frame: DetectionResultDecodedFrame) => void) {
     if (process.env.NODE_ENV === 'development') {
@@ -91,6 +113,9 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
     const channel = new WebSocket(`ws://127.0.0.1:8000/camera`)
 
     channel.onmessage = async function (evt) {
+        fpsRecorder().tick()
+        fpsRecorder().print()
+
         const frame = JSON.parse(evt.data) as DetectionResultFrame
 
         const image = await decodeImage(frame.image)
