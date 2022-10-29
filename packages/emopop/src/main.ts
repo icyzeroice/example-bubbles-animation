@@ -41,6 +41,11 @@ preloadEmojiTextures().then(() => {
             // HACK: 在 onStart 之前更新 image 是为了保证 image 非空方便写代码
             backend().image = frame.image
 
+            // 首帧非零数据才可以用于后面的初始化
+            if (frame.image.width <= 0 || frame.image.height <= 0) {
+                return
+            }
+
             const { width, height } = onStart(frame.image)
 
             backend().emotions = frame.emotions.map((emotion, index) => {
