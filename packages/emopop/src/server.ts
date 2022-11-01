@@ -5,22 +5,16 @@ import { memoize } from 'lodash'
 interface DetectionResultFrame {
     image: string
 
-    /**
-     * true - use the last frame data
-     */
-    skip_detection: boolean
     detection: {
         boxes: [number, number, number, number][]
         emotions: EmotionName[]
     }
-    timestamp: number
 }
 
 interface DetectionResultDecodedFrame {
     image: HTMLImageElement
     boxes: [number, number, number, number][]
     emotions: EmotionName[]
-    timestamp: number
 }
 
 
@@ -45,12 +39,43 @@ async function decodeImage(content: string): Promise<HTMLImageElement> {
     })
 }
 
+
+const fpsRecorder = memoize(() => {
+    let last = performance.now()
+    let total = 0
+    let fps = 0
+
+    return {
+        tick() {
+            const current = performance.now()
+            total += (current - last)
+            fps += 1
+            last = current
+        },
+
+        print() {
+            if (total > 1000) {
+                console.log('fps', fps)
+                total = 0
+                fps = 0
+            }
+        }
+    }
+})
+
 async function readImage(content?: Uint8Array): Promise<HTMLImageElement> {
     if (!content) {
         return imageUtil
     }
 
-    imageUtil.src = URL.createObjectURL(new Blob([content], { type: 'image/jpeg' }))
+    if (process.env.NODE_ENV === 'development') {
+        fpsRecorder().tick()
+        fpsRecorder().print()
+    }
+
+    const url = URL.createObjectURL(new Blob([content], { type: 'image/jpeg' }))
+
+    imageUtil.src = url
 
     return new Promise<HTMLImageElement>((resolve, reject) => {
 
@@ -65,27 +90,6 @@ async function readImage(content?: Uint8Array): Promise<HTMLImageElement> {
     })
 }
 
-const fpsRecorder = memoize(() => {
-    let last = performance.now()
-    let total = 0
-    let fps = 0
-
-    return {
-        tick() {
-            const current = performance.now()
-            total += (current - last)
-            fps += 1
-        },
-
-        print() {
-            if (total > 1000) {
-                console.log('fps', fps)
-                total = 0
-                fps = 0
-            }
-        }
-    }
-})
 
 
 export function createDetectionResultService(onmessage: (frame: DetectionResultDecodedFrame) => void) {
@@ -116,8 +120,7 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
     //             timestamp: performance.now()
     //         })
     //     }, 1000)
-
-
+    //
     //     return
     // }
 
@@ -127,43 +130,31 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
             boxes: [],
             emotions: [],
         },
-        skip_detection: false,
-        timestamp: performance.now(),
     }
 
     // const channel = new WebSocket(`ws://${window.location.host}/camera`)
     const channel = new WebSocket(`ws://127.0.0.1:8000/camera`)
 
+    channel.binaryType = 'arraybuffer'
+
     channel.onmessage = async function (evt) {
-        fpsRecorder().tick()
-        fpsRecorder().print()
+        if (typeof evt.data === 'string') {
+            const frame = JSON.parse(evt.data) as DetectionResultFrame
 
-        try {
-            if (typeof evt.data === 'string') {
-                const frame = JSON.parse(evt.data) as DetectionResultFrame
+            // 后端可能会传不同的长度，所以这里做安全处理
+            const faceCount = Math.min(frame.detection.boxes.length, frame.detection.emotions.length)
 
-                // 后端可能会传不同的长度，所以这里做安全处理
-                const faceCount = Math.min(frame.detection.boxes.length, frame.detection.emotions.length)
-
-                lastFrame.detection = {
-                    boxes: frame.detection.boxes.slice(0, faceCount),
-                    emotions: frame.detection.emotions.slice(0, faceCount),
-                }
-
-                lastFrame.timestamp = frame.timestamp
+            lastFrame.detection = {
+                boxes: frame.detection.boxes.slice(0, faceCount),
+                emotions: frame.detection.emotions.slice(0, faceCount),
             }
-
-            onmessage({
-                image: await readImage(evt.data !== 'string' ? evt.data : undefined),
-                boxes: lastFrame.detection.boxes,
-                emotions: lastFrame.detection.emotions,
-                timestamp: lastFrame.timestamp
-            })
-        } catch (err) {
-            console.log(err)
         }
 
-
+        onmessage({
+            image: await readImage(typeof evt.data !== 'string' ? evt.data : undefined),
+            boxes: lastFrame.detection.boxes,
+            emotions: lastFrame.detection.emotions,
+        })
     }
 
     channel.onopen = function () {
