@@ -2921,6 +2921,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postprocessing@npm:^6.29.1":
+  version: 6.29.1
+  resolution: "postprocessing@npm:6.29.1"
+  peerDependencies:
+    three: ">= 0.125.0 < 0.147.0"
+  checksum: f599eb19d7e9f020238e5a599aa9ce7fa6e0c6cfa2e3b1141f7fa41c581f7714f1cca743194176a645aeeb4851738d33408c8b0218d8f8de0ad8a35f3cea3d49
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1::__archiveUrl=http%3A%2F%2Fmirrors.cloud.tencent.com%2Fnpm%2Fprelude-ls%2F-%2Fprelude-ls-1.2.1.tgz"
@@ -3398,6 +3407,19 @@ __metadata:
   checksum: 1469a5994666a8e76ee7fffda93bde9a5d1c0dfcc831377b1a6ce3579f2933b57e8a8004a3ff7b36529b68484b9fa58eec8f136e1ac9ec02413cdfc360300ec4
   languageName: node
   linkType: hard
+
+"threejs-metaballs@workspace:examples/threejs-metaballs":
+  version: 0.0.0-use.local
+  resolution: "threejs-metaballs@workspace:examples/threejs-metaballs"
+  dependencies:
+    "@types/three": ^0.144.0
+    emoji-set: "workspace:^"
+    postprocessing: ^6.29.1
+    three: ^0.145.0
+    typescript: ^4.5.4
+    vite: ^2.9.9
+  languageName: unknown
+  linkType: soft
 
 "threejs-playground@workspace:examples/threejs-playground":
   version: 0.0.0-use.local
