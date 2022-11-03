@@ -63,6 +63,8 @@ const fpsRecorder = memoize(() => {
     }
 })
 
+const urlNeedRevoke = new Set<string>()
+
 async function readImage(content?: Uint8Array): Promise<HTMLImageElement> {
     if (!content) {
         return imageUtil
@@ -73,13 +75,21 @@ async function readImage(content?: Uint8Array): Promise<HTMLImageElement> {
         fpsRecorder().print()
     }
 
-    const url = URL.createObjectURL(new Blob([content], { type: 'image/jpeg' }))
+    if (imageUtil.src) {
+        urlNeedRevoke.add(imageUtil.src)
+    }
 
+    const url = URL.createObjectURL(new Blob([content], { type: 'image/jpeg' }))
     imageUtil.src = url
 
     return new Promise<HTMLImageElement>((resolve, reject) => {
 
         imageUtil.onload = function () {
+            urlNeedRevoke.forEach((value) => {
+                URL.revokeObjectURL(value)
+            })
+            urlNeedRevoke.clear()
+
             resolve(imageUtil)
         }
 
