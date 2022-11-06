@@ -137,16 +137,16 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
     //     return
     // }
 
-    if (process.env.NODE_ENV === 'development') {
-        setInterval(() => {
-            onmessage({
-                image: { width: 1920, height: 1080 } as unknown as HTMLImageElement,
-                boxes: mockBoxes,
-                emotions: mockEmotions as EmotionName[],
-            })
-        }, 1000)
-        return
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //     setInterval(() => {
+    //         onmessage({
+    //             image: { width: 1920, height: 1080 } as unknown as HTMLImageElement,
+    //             boxes: mockBoxes,
+    //             emotions: mockEmotions as EmotionName[],
+    //         })
+    //     }, 1000)
+    //     return
+    // }
 
     let lastFrame: DetectionResultFrame = {
         image: '',
