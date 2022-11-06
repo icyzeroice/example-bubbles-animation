@@ -1,4 +1,4 @@
-import { addComponent, addEntity, defineQuery, enterQuery, exitQuery, removeEntity } from "bitecs"
+import { addComponent, addEntity, defineQuery, enterQuery, exitQuery, removeComponent, removeEntity } from "bitecs"
 import MatterAttractors from 'matter-attractors'
 import { vec2 } from "gl-matrix"
 import Matter, { Engine, Bodies, World, Vector, Events, Constraint } from 'matter-js'
@@ -213,9 +213,10 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     const offset = [0, prevRadius - nextRadius]
 
 
-    removeEntity(world, bigger)
+    // removeEntity(world, bigger)
+    removeComponent(world, Emotion, bigger)
     // removeEntity(world, smaller)
-    meringBag(world).delete(bigger)
+    // meringBag(world).delete(bigger)
     // meringBag(world).delete(smaller)
 
     animate<{ radius: number, x: number, y: number }>({
@@ -243,9 +244,9 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
             RigidBody.mass[merged] = nextMass
             vec2.set(RigidBody.velocity[merged], 0, RigidBody.velocity[bigger][1])
 
-            // removeEntity(world, bigger)
+            removeEntity(world, bigger)
             removeEntity(world, smaller)
-            // meringBag(world).delete(bigger)
+            meringBag(world).delete(bigger)
             meringBag(world).delete(smaller)
         },
         duration: 200

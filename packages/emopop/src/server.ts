@@ -1,6 +1,7 @@
 import { EmotionName } from 'emoji-set'
 import { vec2 } from 'gl-matrix'
 import { memoize } from 'lodash'
+import { mockBoxes, mockEmotions } from './server.fixture'
 
 interface DetectionResultFrame {
     image: string
@@ -103,34 +104,47 @@ async function readImage(content?: Uint8Array): Promise<HTMLImageElement> {
 
 
 export function createDetectionResultService(onmessage: (frame: DetectionResultDecodedFrame) => void) {
+    // if (process.env.NODE_ENV === 'development') {
+    //     setInterval(() => {
+    //         onmessage({
+    //             image: { width: 1920, height: 1080 } as unknown as HTMLImageElement,
+    //             boxes: [
+    //                 [100, 900, 200, 1000],
+    //                 [300, 900, 400, 1000],
+    //                 [300, 700, 400, 800],
+    //                 [100, 700, 200, 800],
+    //                 [0, 1400, 600, 1000],
+    //                 [700, 900, 800, 1000],
+    //                 [1000, 900, 1100, 1000],
+    //                 [1300, 800, 1500, 1000],
+    //                 [1600, 900, 1700, 1000],
+    //                 [1650, 900, 1750, 1000],
+    //             ],
+    //             emotions: [
+    //                 'Anger',
+    //                 'Neutral',
+    //                 'Neutral',
+    //                 'Contempt',
+    //                 'Disgust',
+    //                 'Fear',
+    //                 'Happiness',
+    //                 'Neutral',
+    //                 'Sadness',
+    //                 'Surprise',
+    //             ],
+    //         })
+    //     }, 1000)
+    //     return
+    // }
+
     if (process.env.NODE_ENV === 'development') {
         setInterval(() => {
             onmessage({
                 image: { width: 1920, height: 1080 } as unknown as HTMLImageElement,
-                boxes: [
-                    [100, 900, 200, 1000],
-                    [300, 900, 400, 1000],
-                    [0, 1400, 600, 1000],
-                    [700, 900, 800, 1000],
-                    [1000, 900, 1100, 1000],
-                    [1300, 800, 1500, 1000],
-                    [1600, 900, 1700, 1000],
-                    [1650, 900, 1750, 1000],
-                ],
-                emotions: [
-                    'Anger',
-                    'Contempt',
-                    'Disgust',
-                    'Fear',
-                    'Happiness',
-                    'Neutral',
-                    'Sadness',
-                    'Surprise',
-                ],
-                timestamp: performance.now()
+                boxes: mockBoxes,
+                emotions: mockEmotions as EmotionName[],
             })
         }, 1000)
-
         return
     }
 
