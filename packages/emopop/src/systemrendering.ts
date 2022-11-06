@@ -38,13 +38,19 @@ export const rendering = memoize((world: EmopopWorld) => {
     world.dom.background.style.width = viewportWidth + 'px'
     world.dom.background.style.height = viewportHeight + 'px'
 
-    const composer = setupMetaballEffects({ scene, camera, renderer })
+    const { composer, passes } = setupMetaballEffects({
+        scene,
+        camera,
+        renderer,
+        groupCount: 6
+    })
 
     return {
         scene,
         camera,
         renderer,
         composer,
+        passes
     }
 }, (world) => world.name)
 
@@ -123,6 +129,14 @@ export function RenderEmojiSystem(world: EmopopWorld) {
 
     // update
     const ents = queryEmoji(world)
+
+    // clear
+    const passes = rendering(world).passes
+
+    passes.forEach((pass) => {
+        pass.selectedObjects = []
+    })
+
     for (let index = 0; index < ents.length; index++) {
         const eid = ents[index];
         const mesh = shapePool(world).get(eid)
@@ -141,6 +155,9 @@ export function RenderEmojiSystem(world: EmopopWorld) {
 
         const radius = Circle.radius[eid]
         mesh.scale.set(radius * 2, radius * 2, 1)
+
+        // WARNING: the number should be matched
+        passes[label].selectedObjects.push(mesh)
     }
 
     return world

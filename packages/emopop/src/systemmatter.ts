@@ -78,11 +78,21 @@ export const engine = memoize((world: EmopopWorld) => {
                 continue
             }
 
+
+            const biggerId = (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) ? eidA : eidB
+            const smallerId = (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) ? eidB : eidA
+
+            // if (world.screen.height / 2 >= Position.value[biggerId][1]) {
+            //     continue
+            // }
+
             // merge the same ones
             // 动画过程可以将物体设置为静止
             // 同时增加动画类型和动画 tween 倒计时 (duration, start properties, end propertis)
             // Body.setStatic(pair.bodyA, true)
-            // Body.setStatic(pair.bodyB, true)
+            // Body.setStatic(pair.bodyB, true) 
+
+
 
             const constraint = Constraint.create({
                 bodyA: pair.bodyA,
@@ -91,17 +101,13 @@ export const engine = memoize((world: EmopopWorld) => {
 
             World.add(engine(world).world, constraint)
 
-            jointPool(world).set(eidA, constraint)
-            jointPool(world).set(eidB, constraint)
+            jointPool(world).set(biggerId, constraint)
+            jointPool(world).set(smallerId, constraint)
 
-            meringBag(world).add(eidA)
-            meringBag(world).add(eidB)
+            meringBag(world).add(biggerId)
+            meringBag(world).add(smallerId)
 
-            if (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) {
-                createMergedEmotionEntity(world, eidA, eidB)
-            } else {
-                createMergedEmotionEntity(world, eidB, eidA)
-            }
+            createMergedEmotionEntity(world, biggerId, smallerId)
         }
     })
 

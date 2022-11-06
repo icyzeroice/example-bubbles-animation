@@ -4,5 +4,15 @@ uniform sampler2D tDiffuse;
 
 void main() {
     vec4 currentScreen = texture(tDiffuse, vUv);
-    gl_FragColor = vec4(currentScreen.xyz * 1.5, currentScreen.w) * max(sign(currentScreen.w - 0.8), 0.0);
+
+    // gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    // return;
+
+    gl_FragColor = vec4(
+        currentScreen.xyz,
+        currentScreen.w
+    ) * max(
+        sign(currentScreen.w - 0.999),
+        0.0
+    );
 }
