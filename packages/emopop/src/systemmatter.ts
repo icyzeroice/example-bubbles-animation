@@ -2,7 +2,7 @@ import { addComponent, addEntity, defineQuery, enterQuery, exitQuery, removeEnti
 import MatterAttractors from 'matter-attractors'
 import { vec2 } from "gl-matrix"
 import Matter, { Engine, Bodies, World, Vector, Events, Constraint } from 'matter-js'
-import { isUndefined, memoize, merge } from "lodash"
+import { isUndefined, memoize } from "lodash"
 import { animate } from "popmotion"
 
 import { Circle, Emotion, Lifetime, Position, RigidBody } from "./components"
