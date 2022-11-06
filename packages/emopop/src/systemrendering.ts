@@ -4,6 +4,7 @@ import { CircleGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeome
 
 import { Circle, Emotion, EmotionEmitter, Lifetime, Position } from "./components"
 import { EmopopWorld } from "./context"
+import { setupMetaballEffects } from "./effects/metaball"
 import { createEmoji, getEmojiTexture } from "./emoji"
 import { backend } from './server'
 
@@ -37,15 +38,19 @@ export const rendering = memoize((world: EmopopWorld) => {
     world.dom.background.style.width = viewportWidth + 'px'
     world.dom.background.style.height = viewportHeight + 'px'
 
+    const composer = setupMetaballEffects({ scene, camera, renderer })
+
     return {
         scene,
         camera,
         renderer,
+        composer,
     }
 }, (world) => world.name)
 
 export function RenderLoopSystem(world: EmopopWorld) {
     rendering(world).renderer.render(rendering(world).scene, rendering(world).camera)
+    rendering(world).composer.render()
     return world
 }
 
@@ -135,7 +140,7 @@ export function RenderEmojiSystem(world: EmopopWorld) {
         mesh.position.set(Position.value[eid][0], Position.value[eid][1], 0)
 
         const radius = Circle.radius[eid]
-        mesh.scale.set(radius, radius, 1)
+        mesh.scale.set(radius * 2, radius * 2, 1)
     }
 
     return world
