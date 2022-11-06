@@ -154,7 +154,7 @@ export function RenderEmojiSystem(world: EmopopWorld) {
         mesh.position.set(Position.value[eid][0], Position.value[eid][1], 0)
 
         const radius = Circle.radius[eid]
-        mesh.scale.set(radius * 2, radius * 2, 1)
+        mesh.scale.set(radius * 2.1, radius * 2.1, 1)
 
         // WARNING: the number should be matched
         passes[label].selectedObjects.push(mesh)
