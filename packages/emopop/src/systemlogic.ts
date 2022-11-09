@@ -107,7 +107,7 @@ export function CreateEmojiSystem(world: EmopopWorld) {
 
     emitDuration += world.time.delta
 
-    if (emitDuration < 1000) {
+    if (emitDuration < world.settings.spwanInterval) {
         return world
     }
 

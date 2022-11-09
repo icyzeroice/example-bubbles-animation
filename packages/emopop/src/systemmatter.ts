@@ -82,9 +82,9 @@ export const engine = memoize((world: EmopopWorld) => {
             const biggerId = (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) ? eidA : eidB
             const smallerId = (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) ? eidB : eidA
 
-            // if (!reachToTopHalfScreen(world, biggerId)) {
-            //     continue
-            // }
+            if (!reachToMergeRegion(world, biggerId)) {
+                continue
+            }
 
             // merge the same ones
             // 动画过程可以将物体设置为静止
@@ -160,8 +160,8 @@ export function MatterPhysicalSystem(world: EmopopWorld) {
                             if (
                                 isNumber(eidA) && isNumber(eidB)
                                 && Emotion.label[eidA] === Emotion.label[eidB]
-                                && reachToTopHalfScreen(world, eidA)
-                                && reachToTopHalfScreen(world, eidB)
+                                && reachToMergeRegion(world, eidA)
+                                && reachToMergeRegion(world, eidB)
                             ) {
 
                                 return {
@@ -287,6 +287,11 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     return merged
 }
 
-function reachToTopHalfScreen(world: EmopopWorld, eid: number) {
-    return world.screen.height / 2 < Position.value[eid][1]
+
+const mergeRegionYRatio = 3 / 4
+function reachToMergeRegion(world: EmopopWorld, eid: number) {
+    const centerY = Position.value[eid][1]
+    const radius = Circle.radius[eid]
+
+    return world.screen.height * mergeRegionYRatio < centerY + radius
 }
