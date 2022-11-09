@@ -2,7 +2,7 @@ import { addComponent, addEntity, defineQuery, enterQuery, exitQuery, removeComp
 import MatterAttractors from 'matter-attractors'
 import { vec2 } from "gl-matrix"
 import Matter, { Engine, Bodies, World, Vector, Events, Constraint } from 'matter-js'
-import { isUndefined, memoize } from "lodash"
+import { isNumber, isUndefined, memoize } from "lodash"
 import { animate } from "popmotion"
 
 import { Circle, Emotion, Lifetime, Position, RigidBody } from "./components"
@@ -82,7 +82,7 @@ export const engine = memoize((world: EmopopWorld) => {
             const biggerId = (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) ? eidA : eidB
             const smallerId = (RigidBody.mass[eidA] >= RigidBody.mass[eidB]) ? eidB : eidA
 
-            // if (world.screen.height / 2 >= Position.value[biggerId][1]) {
+            // if (!reachToTopHalfScreen(world, biggerId)) {
             //     continue
             // }
 
@@ -151,6 +151,32 @@ export function MatterPhysicalSystem(world: EmopopWorld) {
             {
                 mass: RigidBody.mass[eid],
                 velocity: Vector.create(RigidBody.velocity[eid][0], RigidBody.velocity[eid][1]),
+                plugin: {
+                    attractors: [
+                        function (bodyA: Matter.Body, bodyB: Matter.Body) {
+                            const eidA = bodyPool(world).getKey(bodyA)
+                            const eidB = bodyPool(world).getKey(bodyB)
+
+                            if (
+                                isNumber(eidA) && isNumber(eidB)
+                                && Emotion.label[eidA] === Emotion.label[eidB]
+                                && reachToTopHalfScreen(world, eidA)
+                                && reachToTopHalfScreen(world, eidB)
+                            ) {
+
+                                return {
+                                    x: (bodyA.position.x - bodyB.position.x) * 1e-7,
+                                    y: (bodyA.position.y - bodyB.position.y) * 1e-7,
+                                }
+                            }
+
+                            return {
+                                x: 0,
+                                y: 0
+                            }
+                        }
+                    ]
+                }
             },
         )
 
@@ -259,4 +285,8 @@ function createMergedEmotionEntity(world: EmopopWorld, bigger: number, smaller: 
     })
 
     return merged
+}
+
+function reachToTopHalfScreen(world: EmopopWorld, eid: number) {
+    return world.screen.height / 2 < Position.value[eid][1]
 }
