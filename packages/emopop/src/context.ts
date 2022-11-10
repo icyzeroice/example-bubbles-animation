@@ -82,7 +82,7 @@ export const TheWorld = createWorld<EmopopWorld>({
   },
 
   features: {
-    coverEmoji: process.env.NODE_ENV === 'development',
+    coverEmoji: true,
   }
 })
 
