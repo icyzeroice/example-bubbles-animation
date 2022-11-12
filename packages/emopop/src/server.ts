@@ -102,6 +102,12 @@ async function readImage(content?: Uint8Array): Promise<HTMLImageElement> {
 }
 
 
+// const dataNeedPrint: any[] = []
+
+// setTimeout(() => {
+//     console.log(JSON.stringify(dataNeedPrint))
+// }, 5000)
+
 
 export function createDetectionResultService(onmessage: (frame: DetectionResultDecodedFrame) => void) {
     // if (process.env.NODE_ENV === 'development') {
@@ -164,6 +170,8 @@ export function createDetectionResultService(onmessage: (frame: DetectionResultD
     channel.onmessage = async function (evt) {
         if (typeof evt.data === 'string') {
             const frame = JSON.parse(evt.data) as DetectionResultFrame
+
+            // dataNeedPrint.push(frame)
 
             // 后端可能会传不同的长度，所以这里做安全处理
             const faceCount = Math.min(frame.detection.boxes.length, frame.detection.emotions.length)
