@@ -18,6 +18,8 @@ interface EffectContext {
     renderer: WebGLRenderer
     camera: Camera
 
+    resolution: Vector2
+
     /**
      * 按照表情素材数量给
      */
@@ -28,7 +30,8 @@ export function setupMetaballEffects({
     scene,
     renderer,
     camera,
-    groupCount
+    resolution,
+    groupCount,
 }: EffectContext) {
     const composer = new EffectComposer(renderer)
 
@@ -41,7 +44,7 @@ export function setupMetaballEffects({
 
     const passes = Array.from(new Array(groupCount), (_, index) => {
         const passSelectedMetaball = new MetaballPass(
-            new Vector2(700, 700),
+            resolution,
             scene,
             camera,
             scene.children,

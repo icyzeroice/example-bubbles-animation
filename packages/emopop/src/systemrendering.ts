@@ -1,6 +1,6 @@
 import { defineQuery, enterQuery, exitQuery, hasComponent } from "bitecs"
 import { memoize } from "lodash"
-import { CircleGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, ShaderMaterial, Texture, WebGLRenderer } from "three"
+import { CircleGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, ShaderMaterial, Texture, Vector2, WebGLRenderer } from "three"
 
 import { Circle, Emotion, EmotionEmitter, Lifetime, Position } from "./components"
 import { EmopopWorld } from "./context"
@@ -42,7 +42,8 @@ export const rendering = memoize((world: EmopopWorld) => {
         scene,
         camera,
         renderer,
-        groupCount: 6
+        resolution: new Vector2(width, height),
+        groupCount: 6,
     })
 
     return {
@@ -55,7 +56,7 @@ export const rendering = memoize((world: EmopopWorld) => {
 }, (world) => world.name)
 
 export function RenderLoopSystem(world: EmopopWorld) {
-    rendering(world).renderer.render(rendering(world).scene, rendering(world).camera)
+    // rendering(world).renderer.render(rendering(world).scene, rendering(world).camera)
     rendering(world).composer.render()
     return world
 }
@@ -135,6 +136,7 @@ export function RenderEmojiSystem(world: EmopopWorld) {
 
     passes.forEach((pass) => {
         pass.selectedObjects = []
+        pass.needClear = false
     })
 
     for (let index = 0; index < ents.length; index++) {
@@ -158,6 +160,12 @@ export function RenderEmojiSystem(world: EmopopWorld) {
 
         // WARNING: the number should be matched
         passes[label].selectedObjects.push(mesh)
+    }
+
+    const hasSelectedObejctsPasses = passes.filter((pass) => pass.selectedObjects.length)
+
+    if (hasSelectedObejctsPasses.length > 0) {
+        hasSelectedObejctsPasses[0].needClear = true
     }
 
     return world
