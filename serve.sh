@@ -1,5 +1,9 @@
 #/usr/bin/env bash
 
+source /home/oem/.bashrc
+
 cd $(dirname $0)
 
-yarn workspace emopop run serve
+npx yarn workspace emopop run dev
+# yarn workspace emopop run serve
+
