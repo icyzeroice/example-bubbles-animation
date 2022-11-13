@@ -43,7 +43,16 @@ export interface EmopopWorld extends IWorld {
   },
 
   features: {
-    coverEmoji: boolean
+    detectionStyle: {
+      visible: boolean
+      offset: {
+        y: number
+      }
+      scale: {
+        x: number
+        y: number
+      }
+    }
   }
 }
 
@@ -82,7 +91,16 @@ export const TheWorld = createWorld<EmopopWorld>({
   },
 
   features: {
-    coverEmoji: true,
+    detectionStyle: {
+      visible: true,
+      offset: {
+        y: 1,
+      },
+      scale: {
+        x: 1,
+        y: 1,
+      }
+    }
   }
 })
 

@@ -52,12 +52,32 @@ preloadEmojiTextures().then(() => {
                 const box = frame.boxes[index]
 
                 const label = getEmotionIndex(emotion)
-                const radius = vec2.length(vec2.set(vec2.create(), box[2] - box[0], box[3] - box[1])) / 2
-                const position = transformImageCoordToWorldCoord(vec2.scale(vec2.create(), vec2.set(vec2.create(), box[0] + box[2], box[1] + box[3]), 0.5), width, height)
+
+                const radius = vec2.length(
+                    vec2.set(
+                        vec2.create(),
+                        box[2] - box[0],
+                        box[3] - box[1]
+                    )
+                ) / 2
+
+                const position = transformImageCoordToWorldCoord(
+                    vec2.scale(
+                        vec2.create(),
+                        vec2.set(
+                            vec2.create(),
+                            box[0] + box[2],
+                            box[1] + box[3]
+                        ),
+                        0.5
+                    ),
+                    width,
+                    height
+                )
 
                 return {
                     label,
-                    position,
+                    position: vec2.add(position, position, vec2.set(vec2.create(), 0, TheWorld.features.detectionStyle.offset.y * radius * 2)),
                     radius,
                 }
             })

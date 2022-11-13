@@ -44,7 +44,7 @@ export function UpdateEmotionEmitterSystem(world: EmopopWorld) {
         Emotion.label[eid] = emotion.label
 
 
-        if (world.features.coverEmoji) {
+        if (world.features.detectionStyle.visible) {
             Circle.radius[eid] = emotion.radius
         }
 
@@ -59,7 +59,7 @@ export function UpdateEmotionEmitterSystem(world: EmopopWorld) {
         Emotion.label[eid] = emotion.label
 
 
-        if (world.features.coverEmoji) {
+        if (world.features.detectionStyle.visible) {
             Circle.radius[eid] = emotion.radius
         }
 
@@ -77,7 +77,7 @@ function createEmotionEmitterEntity(world: EmopopWorld): number {
     addComponent(world, EmotionEmitter, eid)
     addComponent(world, Emotion, eid)
 
-    if (world.features.coverEmoji) {
+    if (world.features.detectionStyle.visible) {
         addComponent(world, Circle, eid)
     }
 
