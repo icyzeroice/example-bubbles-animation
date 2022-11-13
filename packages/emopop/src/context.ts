@@ -52,7 +52,8 @@ export interface EmopopWorld extends IWorld {
       /**
        * 人脸上 emoji 表情的偏移倍数。
        * @example
-       * y: 1 表示 emoji 表情在人脸上
+       * y: 1   - 表示 emoji 表情在人脸上按人脸的长度的一倍长度进行偏移
+       * y: 0.5 - 表示 emoji 表情在人脸上按人脸的长度的 0.5 倍长度进行偏移（相当于偏移半个人脸长度）
        */
       offset: {
         y: number
