@@ -44,7 +44,16 @@ export interface EmopopWorld extends IWorld {
 
   features: {
     detectionStyle: {
+      /**
+       * 是否在人脸上显示 emoji 表情
+       */
       visible: boolean
+
+      /**
+       * 人脸上 emoji 表情的偏移倍数。
+       * @example
+       * y: 1 表示 emoji 表情在人脸上
+       */
       offset: {
         y: number
       }
@@ -94,7 +103,7 @@ export const TheWorld = createWorld<EmopopWorld>({
     detectionStyle: {
       visible: true,
       offset: {
-        y: 1,
+        y: 0.5,
       },
       scale: {
         x: 1,

@@ -16,25 +16,23 @@ cd example-bubbles-animation
 yarn install
 ```
 
-启动 v1 版本：
+开发模式（此模式下改代码立刻生效，自动运行）：
 
 ```shell
 yarn workspace app run dev
 ```
 
-启动 v2 版本：
+部署模式（此模式下运行性能更高）：
 
 ```shell
-yarn workspace emopop run dev
+# 编译项目代码
+yarn workspace emopop run build
+
+# 运行编译后的代码
+yarn workspace emopop run serve
 ```
 
-## TODO
 
-- [x] 相同颜色球的合并
-- [x] 长时间未参与合并的球消逝
-- [x] 球大小的初始化
-- [x] 边合成边上升
-- [x] 球消失特效
-- [ ] 相同颜色球之间存在引力
-- [ ] 球融合的特效
-- [ ] 性能优化
+## 特性配置
+
+一些主要的可配置项参数都在 `packages/emopop/src/context.ts` 文件中，可看注释释意按需更改。

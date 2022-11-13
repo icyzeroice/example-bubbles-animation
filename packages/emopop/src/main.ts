@@ -77,7 +77,15 @@ preloadEmojiTextures().then(() => {
 
                 return {
                     label,
-                    position: vec2.add(position, position, vec2.set(vec2.create(), 0, TheWorld.features.detectionStyle.offset.y * radius * 2)),
+                    position: vec2.add(
+                        position,
+                        position,
+                        vec2.set(
+                            vec2.create(),
+                            0,
+                            TheWorld.features.detectionStyle.offset.y * radius * 2
+                        )
+                    ),
                     radius,
                 }
             })
