@@ -19,7 +19,7 @@ yarn install
 开发模式（此模式下改代码立刻生效，自动运行）：
 
 ```shell
-yarn workspace app run dev
+yarn workspace emopop run dev
 ```
 
 部署模式（此模式下运行性能更高）：
