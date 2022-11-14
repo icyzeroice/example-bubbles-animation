@@ -58,10 +58,11 @@ export interface EmopopWorld extends IWorld {
       offset: {
         y: number
       }
-      scale: {
-        x: number
-        y: number
-      }
+
+      /**
+       * 调整覆盖在人脸上的 emoji 的表情大小
+       */
+      scale: number
     }
   }
 }
@@ -106,10 +107,7 @@ export const TheWorld = createWorld<EmopopWorld>({
       offset: {
         y: 1,
       },
-      scale: {
-        x: 1,
-        y: 1,
-      }
+      scale: 1
     }
   }
 })

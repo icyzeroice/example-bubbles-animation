@@ -59,7 +59,7 @@ preloadEmojiTextures().then(() => {
                         box[2] - box[0],
                         box[3] - box[1]
                     )
-                ) / 2
+                ) / 2 * TheWorld.features.detectionStyle.scale
 
                 const position = transformImageCoordToWorldCoord(
                     vec2.scale(
