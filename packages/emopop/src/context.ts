@@ -40,6 +40,7 @@ export interface EmopopWorld extends IWorld {
 
     /**
      * 上升的气泡的半径缩放比例
+     * 当前无效设置
      */
     radiusUnit: number
 
