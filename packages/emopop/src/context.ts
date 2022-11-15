@@ -27,18 +27,49 @@ export interface EmopopWorld extends IWorld {
   },
 
   settings: {
+    /**
+     * 上升气泡合并时的最大质量，即炸裂的质量
+     */
     maxMass: number
+
+    /**
+     * 上升气泡的单位质量，即新生气泡的质量
+     */
     massUnit: number
+
+
+    /**
+     * 上升的气泡的半径缩放比例
+     */
     radiusUnit: number
 
-    // pixel per second
+    /**
+     * 单位：像素每秒
+     */
     defaultVelocity: vec2
+
+    /**
+     * 重力加速度，矢量
+     * 单位像素每秒
+     */
     gravity: vec2
 
 
-    // milliseconds
+    /**
+     * emoji 产生气泡的时间间隔
+     * 单位毫秒
+     */
     spwanInterval: number
+
+    /**
+     * emoji 气泡多长时间没有合成就炸裂的时间间隔
+     */
     lifetimeBase: number
+
+    /**
+     * @deprecated
+     * 当前无效设置
+     */
     lifetimeUnit: number
   },
 
