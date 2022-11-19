@@ -163,10 +163,9 @@ export function MatterPhysicalSystem(world: EmopopWorld) {
                                 && reachToMergeRegion(world, eidA)
                                 && reachToMergeRegion(world, eidB)
                             ) {
-
                                 return {
-                                    x: (bodyA.position.x - bodyB.position.x) * 1e-7,
-                                    y: (bodyA.position.y - bodyB.position.y) * 1e-7,
+                                    x: (bodyA.position.x - bodyB.position.x) * (bodyA.mass + bodyB.mass) * world.settings.attractorFactor,
+                                    y: (bodyA.position.y - bodyB.position.y) * (bodyA.mass + bodyB.mass) * world.settings.attractorFactor,
                                 }
                             }
 

@@ -57,6 +57,12 @@ export interface EmopopWorld extends IWorld {
 
 
     /**
+     * 物体间引力系数
+     */
+    attractorFactor: number,
+
+
+    /**
      * emoji 产生气泡的时间间隔
      * 单位毫秒
      */
@@ -120,13 +126,13 @@ export const TheWorld = createWorld<EmopopWorld>({
     scale: 1,
   },
 
-  // 在这里设置没用，要到初始化逻辑中设置
   settings: {
     maxMass: 50,
     massUnit: 1,
     radiusUnit: 1,
     defaultVelocity: vec2.set(vec2.create(), 0, 0),
     gravity: vec2.set(vec2.create(), 0, 0.35),
+    attractorFactor: 1e-7 / 25,
 
     spwanInterval: 1500,
     lifetimeBase: 4000,
