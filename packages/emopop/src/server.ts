@@ -1,6 +1,7 @@
 import { EmotionName } from 'emoji-set'
 import { vec2 } from 'gl-matrix'
 import { memoize } from 'lodash'
+import { whenDebug } from './env'
 import { mockBoxes, mockEmotions } from './server.fixture'
 
 interface DetectionResultFrame {
@@ -71,10 +72,10 @@ async function readImage(content?: Uint8Array): Promise<HTMLImageElement> {
         return imageUtil
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    whenDebug(() => {
         fpsRecorder().tick()
         fpsRecorder().print()
-    }
+    })
 
     if (imageUtil.src) {
         urlNeedRevoke.add(imageUtil.src)

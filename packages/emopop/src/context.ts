@@ -143,10 +143,10 @@ export const TheWorld = createWorld<EmopopWorld>({
     detectionStyle: {
       visible: true,
       offset: {
-        y: 1,
+        y: 0,
       },
       scale: 1
-    }
+    },
   }
 })
 

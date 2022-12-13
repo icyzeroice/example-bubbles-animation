@@ -6,6 +6,7 @@ import { Circle, Emotion, EmotionEmitter, Lifetime, Position } from "./component
 import { EmopopWorld } from "./context"
 import { setupMetaballEffects } from "./effects/metaball"
 import { createEmoji, getEmojiTexture } from "./emoji"
+import { whenDebug } from "./env"
 import { backend } from './server'
 
 
@@ -29,10 +30,25 @@ export const rendering = memoize((world: EmopopWorld) => {
         antialias: true,
         canvas: world.dom.canvas,
     })
+
     renderer.setPixelRatio(devicePixelRatio)
-    const viewportWidth = width / devicePixelRatio * scale
-    const viewportHeight = height / devicePixelRatio * scale
+
+    const viewportWidth = width * scale
+    const viewportHeight = height * scale
+
     renderer.setSize(viewportWidth, viewportHeight)
+    const offsetX = (document.body.clientWidth - viewportWidth) / 2
+    const offsetY = (document.body.clientHeight - viewportHeight) / 2
+
+    whenDebug(() => {
+        console.log('offset', offsetX, offsetY)
+    })
+
+    world.dom.canvas.style.top = `${offsetY}px`
+    world.dom.canvas.style.left = `${offsetX}px`
+    world.dom.background.style.top = `${offsetY}px`
+    world.dom.background.style.left = `${offsetX}px`
+
     renderer.setClearColor(0x000000, 0)
 
     world.dom.background.style.width = viewportWidth + 'px'

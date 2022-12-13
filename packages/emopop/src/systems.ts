@@ -1,5 +1,6 @@
 
 import { EmopopSystem, EmopopWorld } from "./context"
+import { whenDebug } from "./env"
 import { DebugControlsSystem, DebugExampleSystem, DebugMatterBoundary, DebugStatsSystem } from "./systemdebug"
 import { CreateEmojiSystem, RemoveEmotionTerminatedSystem, UpdateEmotionEmitterSystem, UpdateEmotionLifetimeAfterSystem } from "./systemlogic"
 import { MatterPhysicalSystem } from "./systemmatter"
@@ -26,15 +27,14 @@ export const systems = usedSystemFilter([
     [UpdateEmotionLifetimeAfterSystem, true],
 ])
 
-if (process.env.NODE_ENV === 'development') {
+whenDebug(() => {
     systems.push(...usedSystemFilter([
         [DebugControlsSystem, false],
         [DebugStatsSystem, false],
         [DebugExampleSystem, false],
         [DebugMatterBoundary, false],
     ]))
-}
-
+})
 
 function usedSystemFilter(switchers: [EmopopSystem, boolean][]): EmopopSystem[] {
     return switchers.filter(([_, enabled]) => enabled).map(([system]) => system)

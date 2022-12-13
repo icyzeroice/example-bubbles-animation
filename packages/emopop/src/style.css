@@ -4,35 +4,43 @@ body,
   margin: 0;
   width: 100%;
   height: 100%;
-  /* background-color: aliceblue; */
 }
 
 #app {
   position: absolute;
   top: 0;
   left: 0;
-  /* background-color: azure; */
 
   z-index: 100;
+  overflow: hidden;
 }
 
 #canvas {
   display: block;
-  margin: auto;
-  /* background-color: white; */
+
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 #background-container {
   position: absolute;
   top: 0;
   left: 0;
+
   width: 100%;
   height: 100%;
 
+  background-color: red;
+
   z-index: 10;
+  overflow: hidden;
 }
 
 #background {
   display: block;
-  margin: auto;
+
+  position: 0;
+  top: 0;
+  left: 0;
 }

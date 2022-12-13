@@ -6,18 +6,29 @@ import { once } from "lodash"
 import { TheWorld } from "./context"
 import { getEmotionIndex } from "emoji-set"
 import { vec2 } from "gl-matrix"
+import { whenDebug } from "./env"
 
 
 const onStart = once((image: HTMLImageElement) => {
     const width = image.width
     const height = image.height
 
-    const targetAspect = document.body.clientWidth / document.body.clientHeight
+    whenDebug(() => {
+        console.log('source', width, height)
+    })
+
+    const windowWidth = document.body.clientWidth
+    const windowHeight = document.body.clientHeight
+    const targetAspect = windowWidth / windowHeight
     const soruceAspect = width / height
 
     const scale = targetAspect > soruceAspect
-        ? document.body.clientHeight / height
-        : document.body.clientWidth / width
+        ? windowWidth / width
+        : windowHeight / height
+
+    whenDebug(() => {
+        console.log('viewport', windowWidth, windowHeight, scale)
+    })
 
     TheWorld.screen.scale = scale
     TheWorld.screen.width = width
@@ -25,6 +36,12 @@ const onStart = once((image: HTMLImageElement) => {
     TheWorld.settings.radiusUnit = Math.ceil(Math.min(width, height) * 0.02)
     // TheWorld.settings.defaultVelocity[1] = Math.ceil(height / 500)
     // TheWorld.settings.gravity[1] = Math.ceil(height / 500)
+
+    setInterval(() => {
+        if ((windowWidth !== document.body.clientWidth) || (windowHeight !== document.body.clientHeight)) {
+            location.reload()
+        }
+    }, 2000)
 
     MainScene()
 
